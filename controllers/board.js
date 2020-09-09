@@ -16,16 +16,18 @@ exports.BoardUpload = async (req, res, next) => {
   let title = req.body.title;
   let content = req.body.content;
   let category = req.body.category;
+  let starttime = req.body.starttime;
+  let endtime = req.body.endtime;
 
-  if (!user_id || !title || !content || !category) {
+  if (!user_id || !title || !content || !category || !starttime || !endtime) {
     res.status(400).json({ message: "hi" });
     return;
   }
 
   console.log(req.body);
 
-  let query = `insert into p_board (title, content , category , user_id) values (
-        "${title}", "${content}","${category}",${user_id})`;
+  let query = `insert into p_board (title, content , category ,starttime,endtime, user_id) values (
+        "${title}", "${content}","${category}","${starttime}","${endtime}",${user_id})`;
   console.log(query);
   try {
     [result] = await connection.query(query);
@@ -92,6 +94,8 @@ exports.updateBoard = async (req, res, next) => {
   let title = req.body.title;
   let content = req.body.content;
   let category = req.body.category;
+  let starttime = req.body.starttime;
+  let endtime = req.body.endtime;
 
   let query = `select * from p_board where board_id = ${board_id}`;
   try {
@@ -105,7 +109,8 @@ exports.updateBoard = async (req, res, next) => {
     return;
   }
 
-  query = `update p_board set content = "${content}" , title = "${title}", category = "${category}" where board_id = ${board_id}`;
+  query = `update p_board set content = "${content}" , title = "${title}", category = "${category}",
+  starttime = "${starttime}", endtime = "${endtime}" where board_id = ${board_id}`;
   console.log(query);
 
   try {
