@@ -59,7 +59,7 @@ exports.getBoardlist = async (req, res, next) => {
     res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
   }
 
-  let query = `select b.category, b.title, u.nickname, b.created_at from p_board as b left join p_user as u on b.user_id = u.id order by created_at desc ${offset}, ${limit}`;
+  let query = `select b.category, b.title, u.nickname, b.created_at from p_board as b left join p_user as u on b.user_id = u.id order by created_at desc limit ${offset}, ${limit}`;
   console.log(query);
 
   try {
@@ -80,6 +80,7 @@ exports.getBoardlist = async (req, res, next) => {
       mili_movieTime: mili_movieTime,
     });
   } catch (e) {
+    console.log(e);
     res.status(400).json({ success: false });
   }
 };
