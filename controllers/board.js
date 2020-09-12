@@ -16,16 +16,18 @@ exports.BoardUpload = async (req, res, next) => {
   let title = req.body.title;
   let content = req.body.content;
   let category = req.body.category;
+  let starttime = req.body.starttime;
+  let endtime = req.body.endtime;
 
-  if (!user_id || !title || !content || !category) {
+  if (!user_id || !title || !content || !category || !starttime || !endtime) {
     res.status(400).json({ message: "hi" });
     return;
   }
 
   console.log(req.body);
 
-  let query = `insert into p_board (title, content , category , user_id) values (
-        "${title}", "${content}","${category}",${user_id})`;
+  let query = `insert into p_board (title, content , category ,starttime,endtime, user_id) values (
+        "${title}", "${content}","${category}","${starttime}","${endtime}",${user_id})`;
   console.log(query);
   try {
     [result] = await connection.query(query);
@@ -57,7 +59,7 @@ exports.getBoardlist = async (req, res, next) => {
     res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
   }
 
-  let query = `select * from p_board order by created_at desc limit ${offset}, ${limit}`;
+  let query = `select b.category, b.title, u.nickname, b.created_at from p_board as b left join p_user as u on b.user_id = u.id order by created_at desc ${offset}, ${limit}`;
   console.log(query);
 
   try {
@@ -92,6 +94,8 @@ exports.updateBoard = async (req, res, next) => {
   let title = req.body.title;
   let content = req.body.content;
   let category = req.body.category;
+  let starttime = req.body.starttime;
+  let endtime = req.body.endtime;
 
   let query = `select * from p_board where board_id = ${board_id}`;
   try {
@@ -105,7 +109,8 @@ exports.updateBoard = async (req, res, next) => {
     return;
   }
 
-  query = `update p_board set content = "${content}" , title = "${title}", category = "${category}" where board_id = ${board_id}`;
+  query = `update p_board set content = "${content}" , title = "${title}", category = "${category}",
+  starttime = "${starttime}", endtime = "${endtime}" where board_id = ${board_id}`;
   console.log(query);
 
   try {
@@ -226,10 +231,10 @@ exports.viewBoard = async (req, res, next) => {
 exports.searchBoard = async (req, res, next) => {
   let offset = req.query.offset;
   let limit = req.query.limit;
-  let categorykey = req.body.categorykey;
+  let category = req.body.category;
   let keyword = req.query.keyword;
   let query = `
-            select * from p_board WHERE category = '${categorykey}'
+            select * from p_board WHERE category = '${category}'
             and (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit ${offset}, ${limit}
             `;
   console.log(query);

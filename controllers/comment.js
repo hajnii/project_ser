@@ -6,8 +6,30 @@ exports.addComment = async (req, res, next) => {
   let user_id = req.user.id;
   let board_id = req.body.board_id;
   let comment = req.body.comment;
+  let cmt_no = req.body.cmt_no;
 
-  let query = `insert into p_comment(user_id,board_id,comment) values (${user_id}, ${board_id},"${comment}")`;
+  // 1~3 seq,parent
+  let seq = 1;
+  let parent = null;
+
+  try {
+    if (cmt_no != 0) {
+      let query = `
+                  select if(isnull(max(seq)),1,max(seq)) as seq from p_comment where parent = ${cmt_no}
+                  `;
+      [rows] = await connection.query(query);
+      seq = rows[0].seq + 1;
+      parent = cmt_no;
+    }
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+
+  //4
+  query = `
+          insert into p_comment(user_id, parent, board_id, seq, comment) values(${user_id}, ${parent}, ${board_id},${seq}, "${comment}")
+          `;
+
   console.log(query);
   try {
     [rows] = await connection.query(query);
@@ -79,7 +101,7 @@ exports.deleteComment = async (req, res, next) => {
   }
 };
 
-// @desc 게시글 가져오기(15개씩)
+// @desc 댓글 가져오기(15개씩)
 // @route GET /api/v1/comment
 
 exports.getCommentlist = async (req, res, next) => {

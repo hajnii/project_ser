@@ -7,6 +7,8 @@ const morgan = require("morgan");
 const users = require("./routes/users");
 const board = require("./routes/board");
 const comment = require("./routes/comment");
+const favorites = require("./routes/favorites");
+const question = require("./routes/question");
 
 const app = express();
 
@@ -19,6 +21,8 @@ app.use(morgan("combined"));
 app.use("/api/v1/users", users);
 app.use("/api/v1/board", board);
 app.use("/api/v1/comment", comment);
+app.use("/api/v1/favorites", favorites);
+app.use("/api/v1/question", question);
 
 const PORT = process.env.PORT || 3000;
 
