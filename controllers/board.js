@@ -11,6 +11,8 @@ const { query } = require("express");
 // @request photo, comment, user_id(auth)
 // @response success
 
+// git test
+
 exports.BoardUpload = async (req, res, next) => {
   let user_id = req.user.id;
   let title = req.body.title;
