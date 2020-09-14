@@ -1,7 +1,7 @@
 const connection = require("../db/mysql_connection");
 
 // @desc    게시글마다 유저가 댓글 달수 있는 API
-// @route   GET /api/v1/comment
+// @route   post /api/v1/comment
 exports.addComment = async (req, res, next) => {
   let user_id = req.user.id;
   let board_id = req.body.board_id;
@@ -33,7 +33,7 @@ exports.addComment = async (req, res, next) => {
   console.log(query);
   try {
     [rows] = await connection.query(query);
-    res.status(200).json({ success: true });
+    res.status(200).json({ success: true, items: rows });
   } catch (e) {
     res.status(500).json({ error: e });
   }

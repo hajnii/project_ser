@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const connection = require("../db/mysql_connection");
 const chalk = require("chalk");
+const e = require("express");
 
 let nomal_txt = chalk.cyanBright;
 let highlight_txt = chalk.yellowBright;
@@ -39,8 +40,10 @@ const auth = async (req, res, next) => {
 
   try {
     [rows] = await connection.query(query, data);
+    console.log(query);
     if (rows.length == 0) {
-      res.status(401).json();
+      res.status(401).json({ error: e, message: "tqtq", rows: rows });
+      console.log("@@@");
       return;
     } else {
       req.user = rows[0];
@@ -54,6 +57,7 @@ const auth = async (req, res, next) => {
       next();
     }
   } catch (e) {
+    console.log(e);
     res.status(500).json();
     return;
   }

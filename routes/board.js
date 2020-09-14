@@ -15,6 +15,6 @@ router.route("/").post(auth, BoardUpload).get(getBoardlist);
 router.route("/view").post(auth, viewBoard);
 router.route("/update").post(auth, updateBoard);
 router.route("/delete").delete(auth, deleteBoard);
-router.route("/search").get(searchBoard);
+router.route("/search").post(searchBoard);
 
 module.exports = router;

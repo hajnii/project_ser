@@ -2,7 +2,7 @@ const moment = require("moment");
 const connection = require("../db/mysql_connection");
 
 // @desc 질문 게시글 업로드 하는 API
-// @route POST /api/v1/question
+// @route PUT /api/v1/question
 // @request title, content, category ,user_id(auth)
 // @response success
 
