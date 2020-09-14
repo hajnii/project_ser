@@ -44,14 +44,14 @@ exports.createUser = async (req, res, next) => {
     [result] = await conn.query(query, data);
     user_id = result.insertId;
   } catch (e) {
-    console.log(e);
-    if (e.errno == 1062) {
-      res.status(401).json({
-        success: false,
-        error: 1,
-        message: "닉네임이나 아이디 중복을 확인해주세요.",
-      });
-    }
+    // console.log(e);
+    // if (e.errno == 1062) {
+    //   res.status(401).json({
+    //     success: false,
+    //     error: 1,
+    //     message: "닉네임이나 아이디 중복을 확인해주세요.",
+    //   });
+    // }
     await conn.rollback();
     res.status(500).json({ success: false, error: e });
     return;
@@ -72,6 +72,30 @@ exports.createUser = async (req, res, next) => {
   await conn.commit();
   await conn.release();
   res.status(200).json({ success: true, result: result, token: token });
+};
+
+// 아이디 중복확인
+exports.checkId = async (req, res, next) => {
+  let email = req.body.email;
+  let nickname = req.body.nickname;
+
+  let query = `select * from p_user where email = "${email}"`;
+  console.log(query);
+
+  try {
+    [result] = await connection.query(query);
+    if (result.lengtn == 0) {
+      res.status(401).json({
+        success: false,
+        error: 1,
+        message: "이미 가입된 아이디 입니다.",
+      });
+    } else {
+      res.status(200).json({ success: true });
+    }
+  } catch (e) {
+    res.status(500).json({ success: false });
+  }
 };
 
 // @desc 로그인

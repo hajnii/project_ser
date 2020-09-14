@@ -10,17 +10,19 @@ const {
   deleteUser,
   forgotPasswd,
   resetPasswd,
+  checkId,
 } = require("../controllers/users");
 
 const router = express.Router();
 //주석
 
-router.route("/").post(createUser);
+router.route("/").post(createUser).delete(auth, deleteUser);
 router.route("/login").post(loginUser);
 router.route("/logout").delete(auth, logout);
 router.route("/changePasswd").post(auth, changePasswd);
 router.route("/Mypage").get(auth, Mypage);
-router.route("/").delete(auth, deleteUser);
+router.route("/checkId").get(checkId);
+
 router.route("/forgot").post(auth, forgotPasswd);
 router.route("/resetPasswd/:resetPasswdToken").post(auth, resetPasswd);
 module.exports = router;

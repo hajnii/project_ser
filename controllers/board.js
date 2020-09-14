@@ -241,7 +241,7 @@ exports.searchBoard = async (req, res, next) => {
   console.log(query);
   try {
     [rows, fields] = await connection.query(query);
-    res.status(200).json({ success: true, items: rows });
+    res.status(200).json({ success: true, items: rows, cnt: rows.length });
   } catch (e) {
     res.status(500).json({ success: false, message: "DB Error", error: e });
   }
