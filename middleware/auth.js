@@ -40,7 +40,7 @@ const auth = async (req, res, next) => {
   try {
     [rows] = await connection.query(query, data);
     if (rows.length == 0) {
-      res.status(401).json({ message: "h" });
+      res.status(401).json();
       return;
     } else {
       req.user = rows[0];

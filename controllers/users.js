@@ -19,7 +19,7 @@ exports.createUser = async (req, res, next) => {
   let passwd = req.body.passwd;
   let nickname = req.body.nickname;
   let name = req.body.name;
-
+  //주석
   if (!email || !passwd || !nickname || !name) {
     res.status(400).json({ message: "파라미터 잘못" });
     return;
