@@ -37,12 +37,14 @@ exports.createUser = async (req, res, next) => {
 
   let user_id;
   console.log(query);
+  let receiver_id;
   const conn = await connection.getConnection();
   await conn.beginTransaction();
 
   try {
     [result] = await conn.query(query, data);
     user_id = result.insertId;
+    receiver_id = result.insertId;
   } catch (e) {
     console.log(e);
     if (e.errno == 1062) {
@@ -57,9 +59,12 @@ exports.createUser = async (req, res, next) => {
     return;
   }
 
-  const token = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET);
-  query = "insert into p_token (user_id, token) values (?,?)";
-  data = [user_id, token];
+  const token = jwt.sign(
+    { user_id: user_id, receiver_id: receiver_id },
+    process.env.ACCESS_TOKEN_SECRET
+  );
+  query = "insert into p_token (user_id, token , receiver_id) values (?,?,?)";
+  data = [user_id, token, receiver_id];
 
   try {
     [result] = await conn.query(query, data);

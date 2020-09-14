@@ -9,6 +9,7 @@ const board = require("./routes/board");
 const comment = require("./routes/comment");
 const favorites = require("./routes/favorites");
 const question = require("./routes/question");
+const message = require("./routes/message");
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use("/api/v1/board", board);
 app.use("/api/v1/comment", comment);
 app.use("/api/v1/favorites", favorites);
 app.use("/api/v1/question", question);
+app.use("/api/v1/message", message);
 
 const PORT = process.env.PORT || 3000;
 
