@@ -11,11 +11,7 @@ const {
   forgotPasswd,
   resetPasswd,
   checkId,
-<<<<<<< HEAD
   checkNickName,
-=======
-  checkNickName
->>>>>>> d1c5c949542f17c463d5420e8e782175a5d3ca4d
 } = require("../controllers/users");
 
 const router = express.Router();
