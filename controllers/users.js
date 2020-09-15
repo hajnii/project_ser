@@ -138,6 +138,10 @@ exports.checkNickName = async (req, res, next) => {
   }
 };
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> d1c5c949542f17c463d5420e8e782175a5d3ca4d
 // @desc 로그인
 // @route POST /api/v1/users/login
 // @request email.passwd

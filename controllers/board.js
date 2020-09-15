@@ -248,8 +248,8 @@ exports.searchBoard = async (req, res, next) => {
   let category = req.body.category;
   let keyword = req.query.keyword;
   let query = `
-            select * from p_board WHERE category = '${category}'
-            and (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit ${offset}, ${limit}
+            select b.* , u.nickname from p_board as b join p_user as u on b.user_id = u.id WHERE category = "${category}"
+            and (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit ${offset},${limit}
             `;
   console.log(query);
   try {
