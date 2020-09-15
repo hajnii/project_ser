@@ -78,6 +78,15 @@ exports.createUser = async (req, res, next) => {
 exports.checkId = async (req, res, next) => {
   let email = req.body.email;
 
+  if (email == undefined || email == "") {
+    res.status(401).json({
+      success: false,
+      error: 1,
+      message: "아이디를 입력해 주세요",
+    });
+    return;
+  }
+
   let query = `select * from p_user where email = "${email}"`;
   console.log(query);
 
@@ -100,6 +109,15 @@ exports.checkId = async (req, res, next) => {
 // 닉네임 중복확인
 exports.checkNickName = async (req, res, next) => {
   let nickname = req.body.nickname;
+
+  if (nickname == undefined || nickname == "") {
+    res.status(401).json({
+      success: false,
+      error: 1,
+      message: "닉네임을 입력해 주세요",
+    });
+    return;
+  }
 
   let query = `select * from p_user where nickname = "${nickname}"`;
   console.log(query);
