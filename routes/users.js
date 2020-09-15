@@ -11,6 +11,7 @@ const {
   forgotPasswd,
   resetPasswd,
   checkId,
+  checkNickName,
 } = require("../controllers/users");
 
 const router = express.Router();
@@ -21,8 +22,11 @@ router.route("/login").post(loginUser);
 router.route("/logout").delete(auth, logout);
 router.route("/changePasswd").post(auth, changePasswd);
 router.route("/Mypage").get(auth, Mypage);
-router.route("/checkId").get(checkId);
 
 router.route("/forgot").post(auth, forgotPasswd);
 router.route("/resetPasswd/:resetPasswdToken").post(auth, resetPasswd);
+
+router.route("/checkid").post(checkId);
+router.route("/checknik").post(checkNickName);
+
 module.exports = router;
