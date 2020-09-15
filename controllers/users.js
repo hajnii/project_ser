@@ -77,14 +77,13 @@ exports.createUser = async (req, res, next) => {
 // 아이디 중복확인
 exports.checkId = async (req, res, next) => {
   let email = req.body.email;
-  let nickname = req.body.nickname;
 
   let query = `select * from p_user where email = "${email}"`;
   console.log(query);
 
   try {
     [result] = await connection.query(query);
-    if (result.lengtn == 0) {
+    if (result.length > 0) {
       res.status(401).json({
         success: false,
         error: 1,
@@ -97,6 +96,30 @@ exports.checkId = async (req, res, next) => {
     res.status(500).json({ success: false });
   }
 };
+
+// 닉네임 중복확인
+exports.checkNickName = async (req, res, next) => {
+  let nickname = req.body.nickname;
+
+  let query = `select * from p_user where nickname = "${nickname}"`;
+  console.log(query);
+
+  try {
+    [result] = await connection.query(query);
+    if (result.length > 0) {
+      res.status(401).json({
+        success: false,
+        error: 1,
+        message: "이미 존재하는 닉네임 입니다.",
+      });
+    } else {
+      res.status(200).json({ success: true });
+    }
+  } catch (e) {
+    res.status(500).json({ success: false });
+  }
+};
+
 
 // @desc 로그인
 // @route POST /api/v1/users/login
