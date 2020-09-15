@@ -68,6 +68,7 @@ exports.getBoardlist = async (req, res, next) => {
                 b.title, 
                 u.nickname, 
                 b.created_at,
+                b.starttime,
                 b.endtime,
                 ifnull((select count(board_id) as board_id_cnt from p_boardview where board_id = b.board_id group by board_id),0) as view_cnt
               from p_board as b left join p_user as u on b.user_id = u.id 
