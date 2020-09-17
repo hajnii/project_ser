@@ -191,8 +191,8 @@ exports.viewBoard = async (req, res, next) => {
     return;
   }
 
-  query = `select b.* , (select count(*) from p_boardview where board_id = ${board_id}) as view_cnt,
-  u.nickname from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1`;
+  query = `select b.* , (select count(*) from p_boardview where board_id = ${board_id}) as view_cnt 
+  from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1`;
 
   // query = `select b.* , (select count(*) from p_boardviewer where board_id = ${board_id}) as view_cnt,
   // u.nickname from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1`;
