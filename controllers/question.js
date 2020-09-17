@@ -124,7 +124,7 @@ exports.updateQuestion = async (req, res, next) => {
   let content = req.body.content;
   let category = req.body.category;
 
-  let query = `select * from p_question where id = ${question_id}`;
+  let query = `select * from p_question where question_id = ${question_id}`;
   try {
     [rows] = await connection.query(query);
     if (rows[0].user_id != user_id) {
@@ -136,7 +136,7 @@ exports.updateQuestion = async (req, res, next) => {
     return;
   }
 
-  query = `update p_question set content = "${content}" , title = "${title}", category = "${category}" where id = ${question_id}`;
+  query = `update p_question set content = "${content}" , title = "${title}", category = "${category}" where question_id = ${question_id}`;
   console.log(query);
 
   try {
@@ -160,7 +160,7 @@ exports.deleteQuestion = async (req, res, next) => {
   let question_id = req.body.question_id;
 
   // 해당 유저의 댓글이 맞는지 체크
-  let query = `select * from p_question where id = ${question_id}`;
+  let query = `select * from p_question where question_id = ${question_id}`;
 
   try {
     [rows] = await connection.query(query);
@@ -173,7 +173,7 @@ exports.deleteQuestion = async (req, res, next) => {
     return;
   }
 
-  query = `delete from p_question where id = ${question_id}`;
+  query = `delete from p_question where question_id = ${question_id}`;
 
   try {
     [result] = await connection.query(query);
