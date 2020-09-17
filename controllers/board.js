@@ -171,17 +171,17 @@ exports.viewBoard = async (req, res, next) => {
   let user_id = req.user.id;
   let board_id = req.body.board_id;
 
-  let query = `
-                insert into p_boardview(board_id, user_id, boardview)
-                values(${board_id}, ${user_id}, now())
-                ON DUPLICATE KEY UPDATE boardview = now();
-              `;
-
   // let query = `
-  //             insert into p_boardviewer(board_id,user_id, boardview)
-  //             values(${board_id},${user_id}, now())
-  //             ON DUPLICATE KEY UPDATE boardview = now();
-  //           `;
+  //               insert into p_boardview(board_id, user_id, boardview)
+  //               values(${board_id}, ${user_id}, now())
+  //               ON DUPLICATE KEY UPDATE boardview = now();
+  //             `;
+
+  let query = `
+              insert into p_boardviewer(board_id,user_id, boardview)
+              values(${board_id},${user_id}, now())
+              ON DUPLICATE KEY UPDATE boardview = now();
+            `;
 
   try {
     [data] = await connection.query(query);
@@ -191,11 +191,10 @@ exports.viewBoard = async (req, res, next) => {
     return;
   }
 
-  query = `select b.* , (select count(*) from p_boardview where board_id = ${board_id}) as view_cnt 
-  from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1`;
+  // query = `select b.* , (select count(*) from p_boardview where board_id = ${board_id}) as view_cnt
+  // from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1`;
 
-  // query = `select b.* , (select count(*) from p_boardviewer where board_id = ${board_id}) as view_cnt,
-  // u.nickname from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1`;
+  query = `select b.* , (select count(*) from p_boardviewer where board_id = ${board_id}) as view_cnt from p_board as b where board_id = ${board_id} limit 1`;
   // console.log(query);
 
   try {
@@ -208,42 +207,39 @@ exports.viewBoard = async (req, res, next) => {
   }
 };
 
-// // @desc    게시글 상세보기(로그인 안한 채로)
-// // @route   POST /api/v1/board/detail
-// // @request board_id
-// exports.noauthviewBoard = async (req, res, next) => {
-//   let board_id = req.body.board_id;
+// @desc    게시글 상세보기(로그인 안한 채로)
+// @route   POST /api/v1/board/detail
+// @request board_id
+exports.noauthviewBoard = async (req, res, next) => {
+  let board_id = req.body.board_id;
 
-//   let query = `
-//               insert into p_boardviewer(board_id,boardview)
-//               values(${board_id},now())
-//               ON DUPLICATE KEY UPDATE boardview = now();
-//             `;
+  let query = `
+              insert into p_boardviewer(board_id,boardview)
+              values(${board_id},now())
+              ON DUPLICATE KEY UPDATE boardview = now();
+            `;
 
-//   try {
-//     [data] = await connection.query(query);
-//   } catch (e) {
-//     console.log(e);
-//     res.status(500).json();
-//     return;
-//   }
+  try {
+    [data] = await connection.query(query);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json();
+    return;
+  }
 
-//   // query = `select b.* , (select count(*) from p_boardview where board_id = ${board_id}) as view_cnt,
-//   // u.nickname from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1`;
+  query = `select b.* , (select count(*) from p_boardviewer where board_id = ${board_id}) as view_cnt,
+  u.nickname from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1`;
+  console.log(query);
 
-//   query = `select b.* , (select count(*) from p_boardviewer where board_id = ${board_id}) as view_cnt,
-//   u.nickname from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1`;
-//   console.log(query);
-
-//   try {
-//     [data] = await connection.query(query);
-//     res.status(200).json({ data: data });
-//     return;
-//   } catch (e) {
-//     res.status(500).json();
-//     return;
-//   }
-// };
+  try {
+    [data] = await connection.query(query);
+    res.status(200).json({ data: data });
+    return;
+  } catch (e) {
+    res.status(500).json();
+    return;
+  }
+};
 
 // 누를때마다 조회수 +1
 // exports.viewBoard = async (req, res, next) => {
