@@ -118,11 +118,14 @@ exports.updateBoard = async (req, res, next) => {
   starttime = "${starttime}", endtime = "${endtime}" where board_id = ${board_id}`;
   console.log(query);
 
+  let qur = `select * from p_board where board_id = ${board_id}`;
+
   try {
     [result] = await connection.query(query);
+    [rows] = await connection.query(qur);
     res
       .status(200)
-      .json({ success: true, message: "수정되었습니다.", result: result });
+      .json({ success: true, message: "수정되었습니다.", items: rows });
   } catch (e) {
     res.status(500).json({ success: false, error: e });
     return;
@@ -138,14 +141,13 @@ exports.deleteBoard = async (req, res, next) => {
   let board_id = req.body.board_id;
 
   // 해당 유저의 댓글이 맞는지 체크
-  let query = `select * from p_board where board_id = ${board_id}`;
+  let query = `select * from p_board where board_id = ${board_id} limit 1`;
 
   try {
     [rows] = await connection.query(query);
-    if (rows[0].user_id != user_id) {
-      res.status(401).json({ message: "자신의 아이디가 아닙니다." });
-      return;
-    }
+    res
+      .status(200)
+      .json({ success: true, message: "수정되었습니다.", items: rows });
   } catch (e) {
     res.status(500).json({ message: " g항 ㅇㄱ?" });
     return;
