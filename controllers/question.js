@@ -100,7 +100,7 @@ exports.viewQuestion = async (req, res, next) => {
     return;
   }
 
-  query = `select *,(select count(*) from p_boardview where question_id = ${question_id}) as view_cnt from p_question where id = ${question_id} limit 1`;
+  query = `select *,(select count(*) from p_boardview where question_id = ${question_id}) as view_cnt from p_question where question_id = ${question_id} limit 1`;
   console.log(query);
 
   try {
