@@ -118,7 +118,10 @@ exports.updateBoard = async (req, res, next) => {
   starttime = "${starttime}", endtime = "${endtime}",created_at = now() where board_id = ${board_id}`;
   console.log(query);
 
-  let qur = `select * from p_board where board_id = ${board_id}`;
+  let qur = `select u.nickname ,b.* from p_board as b
+              left join p_user as u 
+              on b.user_id = u.id 
+              where board_id = ${board_id}`;
 
   try {
     [result] = await connection.query(query);
