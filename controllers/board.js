@@ -115,7 +115,7 @@ exports.updateBoard = async (req, res, next) => {
   }
 
   query = `update p_board set content = "${content}" , title = "${title}", category = "${category}",
-  starttime = "${starttime}", endtime = "${endtime}" where board_id = ${board_id}`;
+  starttime = "${starttime}", endtime = "${endtime}",created_at = now() where board_id = ${board_id}`;
   console.log(query);
 
   let qur = `select * from p_board where board_id = ${board_id}`;
