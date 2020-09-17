@@ -131,7 +131,7 @@ exports.checkNickName = async (req, res, next) => {
         message: "이미 존재하는 닉네임 입니다.",
       });
     } else {
-      res.status(200).json({ success: true, items: result });
+      res.status(200).json({ success: true });
     }
   } catch (e) {
     res.status(500).json({ success: false });
