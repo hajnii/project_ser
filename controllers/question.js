@@ -109,7 +109,7 @@ exports.viewQuestion = async (req, res, next) => {
 
   try {
     [result] = await connection.query(query);
-    res.status(200).json({ success: true, data: data });
+    res.status(200).json({ success: true, data: result });
     return;
   } catch (e) {
     res.status(500).json();
