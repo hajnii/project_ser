@@ -206,12 +206,12 @@ exports.searchQuestion = async (req, res, next) => {
   let category = req.body.category;
   let keyword = req.query.keyword;
 
-  let query = `select * from p_question WHERE category = '${category}' and
-  (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit ${offset}, ${limit}`;
+  let query = `select q.* ,(select count(*) from p_boardview where question_id = 14) as view_cnt , u.nickname from p_question as q 
+  join p_user as u on q.user_id = u.id WHERE category = '${category}' and (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit 10 ${offset}, ${limit}`;
   console.log(query);
   try {
     [rows, fields] = await connection.query(query);
-    res.status(200).json({ success: true, items: rows });
+    res.status(200).json({ success: true, items: rows, cnt: rows.length });
   } catch (e) {
     res.status(500).json({ success: false, message: "DB Error", error: e });
   }
