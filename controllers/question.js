@@ -52,7 +52,10 @@ exports.latestQuestion = async (req, res, next) => {
     res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
   }
 
-  let query = `select * from p_question order by created_at desc limit ${offset}, ${limit}`;
+  let query = `select q.*,u.nickname,ifnull((select count(question_id) as board_id_cnt from p_boardview
+                where board_id = q.question_id group by board_id),0) as view_cnt
+                from p_question as q left join p_user as u on q.user_id = u.id 
+                order by created_at desc limit ${offset}, ${limit}`;
   console.log(query);
 
   try {
@@ -100,11 +103,12 @@ exports.viewQuestion = async (req, res, next) => {
     return;
   }
 
-  query = `select *,(select count(*) from p_boardview where question_id = ${question_id}) as view_cnt from p_question where question_id = ${question_id} limit 1`;
+  query = `select q.* ,u.nickname, (select count(*) from p_boardview where question_id = 15) as view_cnt
+  from p_question as q join p_user as u on q.user_id = u.id where question_id =  ${question_id} limit 1`;
   console.log(query);
 
   try {
-    [data] = await connection.query(query);
+    [result] = await connection.query(query);
     res.status(200).json({ success: true, data: data });
     return;
   } catch (e) {
@@ -139,8 +143,14 @@ exports.updateQuestion = async (req, res, next) => {
   query = `update p_question set content = "${content}" , title = "${title}", category = "${category}" where question_id = ${question_id}`;
   console.log(query);
 
+  let qur = `select u.nickname ,q.* from p_question as q
+              left join p_user as u 
+              on q.user_id = u.id 
+              where question_id = ${question_id}`;
+
   try {
     [result] = await connection.query(query);
+    [rows] = await connection.query(qur);
     res
       .status(200)
       .json({ success: true, message: "수정되었습니다.", result: result });
