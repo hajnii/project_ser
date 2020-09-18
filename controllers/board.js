@@ -69,20 +69,10 @@ exports.getBoardlist = async (req, res, next) => {
 
   try {
     [rows] = await connection.query(query);
-    let created_at = rows[0].created_at;
-    let mili_movieTime = new Date(created_at).getTime;
-
-    rows = rows.map(function (row) {
-      return Object.assign({}, row, {
-        created_date: moment(row.created_date).format("YYYY-MM-DD HH:mm:ss"),
-      });
-    });
-
     res.status(200).json({
       success: true,
       items: rows,
       cnt: rows.length,
-      mili_movieTime: mili_movieTime,
     });
   } catch (e) {
     console.log(e);
