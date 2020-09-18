@@ -248,9 +248,10 @@ exports.searchBoard = async (req, res, next) => {
   let category = req.body.category;
   let keyword = req.query.keyword;
   let query = `
-            select b.* ,(select count(*) from p_boardview where board_id = 73) as view_cnt ,
-            u.nickname from p_board as b join p_user as u on b.user_id = u.id WHERE category = "${category}"
-            and (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit ${offset},${limit}
+              select b.*,u.nickname,ifnull((select count(board_id) as board_id_cnt from p_boardview
+              where board_id = b.board_id group by board_id),0) as view_cnt from p_board as b 
+              join p_user as u on b.user_id = u.id WHERE category = "${category}"
+              and (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit ${offset},${limit}
             `;
   console.log(query);
   try {

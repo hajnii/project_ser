@@ -206,8 +206,10 @@ exports.searchQuestion = async (req, res, next) => {
   let category = req.body.category;
   let keyword = req.query.keyword;
 
-  let query = `select q.* ,(select count(*) from p_boardview ) as view_cnt , u.nickname from p_question as q 
-  join p_user as u on q.user_id = u.id WHERE category = '${category}' and (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit ${offset}, ${limit}`;
+  let query = `select q.*,u.nickname,ifnull((select count(question_id) as question_id_cnt from p_boardview
+              where question_id = q.question_id group by question_id),0) as view_cnt from p_question as q 
+            join p_user as u on q.user_id = u.id WHERE category = "${category}"
+            and (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit ${offset}, ${limit}`;
   console.log(query);
   try {
     [rows, fields] = await connection.query(query);
