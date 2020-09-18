@@ -53,7 +53,7 @@ exports.latestQuestion = async (req, res, next) => {
   }
 
   let query = `select q.*,u.nickname,ifnull((select count(question_id) as board_id_cnt from p_boardview
-                where board_id = q.question_id group by board_id),0) as view_cnt
+                where question_id = q.question_id group by board_id),0) as view_cnt
                 from p_question as q left join p_user as u on q.user_id = u.id 
                 order by created_at desc limit ${offset}, ${limit}`;
   console.log(query);
