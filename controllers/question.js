@@ -153,7 +153,7 @@ exports.updateQuestion = async (req, res, next) => {
     [rows] = await connection.query(qur);
     res
       .status(200)
-      .json({ success: true, message: "수정되었습니다.", result: result });
+      .json({ success: true, message: "수정되었습니다.", items: rows });
   } catch (e) {
     res.status(500).json({ success: false, error: e });
     return;
