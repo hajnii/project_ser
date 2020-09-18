@@ -196,7 +196,7 @@ exports.deleteQuestion = async (req, res, next) => {
 };
 
 // @desc      검색하는 API
-// @route     GET/api/v1/question/search?keyword=Y
+// @route     POST/api/v1/question/search?keyword=Y
 // @request   keyword
 // @response  success
 
