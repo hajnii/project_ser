@@ -134,16 +134,17 @@ exports.deleteBoard = async (req, res, next) => {
   let user_id = req.user.id;
   let board_id = req.body.board_id;
 
-  // 해당 유저의 댓글이 맞는지 체크
-  let query = `select * from p_board where board_id = ${board_id} limit 1`;
+  // 해당 유저의 게시글이 맞는지 체크
+  let query = `select * from p_board where board_id = ${board_id}`;
 
   try {
     [rows] = await connection.query(query);
-    res
-      .status(200)
-      .json({ success: true, message: "수정되었습니다.", items: rows });
+    if (rows[0].user_id != user_id) {
+      res.status(401).json({ message: "자신의 아이디가 아닙니다." });
+      return;
+    }
   } catch (e) {
-    res.status(500).json({ message: " g항 ㅇㄱ?" });
+    res.status(500).json({ message: "위치 확인" });
     return;
   }
 
