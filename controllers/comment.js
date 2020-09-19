@@ -29,11 +29,14 @@ exports.addComment = async (req, res, next) => {
   query = `
           insert into p_comment(user_id, parent, board_id, seq, comment) values(${user_id}, ${parent}, ${board_id},${seq}, "${comment}")
           `;
+  
+ let qur = `select u.nickname ,c.* from p_comment as c left join p_user as u on c.user_id = u.id where cmt_no = ${cmt_no}`;
 
   console.log(query);
   try {
     [rows] = await connection.query(query);
-    res.status(200).json({ success: true, items: rows });
+    [result] = await connection.query(qur);
+    res.status(200).json({ success: true, items: result });
   } catch (e) {
     res.status(500).json({ error: e });
   }
