@@ -39,6 +39,7 @@ exports.addComment = async (req, res, next) => {
   }
 };
 
+// 댓글 수정하기 
 exports.updateComment = async (req, res, next) => {
   let user_id = req.user.id;
   let reply_id = req.body.reply_id;
