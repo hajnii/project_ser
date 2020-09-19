@@ -77,10 +77,11 @@ exports.updateComment = async (req, res, next) => {
 // @desc    자신이 적은 댓글 삭제하기
 // @route   Delete /api/v1/comment
 exports.deleteComment = async (req, res, next) => {
-  let reply_id = req.body.reply_id;
+  let cmt_no = req.body.cmt_no;
   let user_id = req.user.id;
+  let board_id = req.board_id
   // 해당 유저의 댓글이 맞는지 체크
-  let query = `select * from p_comment where id = ${reply_id}`;
+  let query = `select * from p_comment where board_id = ${board_id}`;
 
   try {
     [rows] = await connection.query(query);
@@ -93,7 +94,7 @@ exports.deleteComment = async (req, res, next) => {
     return;
   }
 
-  query = `delete from p_comment where id = ${reply_id}`;
+  query = `delete from p_comment where cmt_no = ${cmt_no}`;
 
   try {
     [result] = await connection.query(query);
