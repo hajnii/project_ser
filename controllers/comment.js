@@ -30,7 +30,7 @@ exports.addComment = async (req, res, next) => {
           insert into p_comment(user_id, parent, board_id, seq, comment) values(${user_id}, ${parent}, ${board_id},${seq}, "${comment}")
           `;
   
- let qur = `select u.nickname ,c.* from p_comment as c left join p_user as u on c.user_id = u.id where cmt_no = ${cmt_no}`;
+ let qur = `select u.nickname ,c.* from p_comment as c left join p_user as u on c.user_id = u.id order by cmt_no desc limit 1`;
 
   console.log(query);
   try {
