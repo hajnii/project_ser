@@ -15,4 +15,6 @@ router.route("/add").post(auth, addComment);
 router.route("/update").post(auth, updateComment);
 router.route("/delete").delete(auth, deleteComment);
 
+// w질문게시판
+
 module.exports = router;
