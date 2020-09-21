@@ -29,8 +29,8 @@ exports.addComment = async (req, res, next) => {
   query = `
           insert into p_comment(user_id, parent, board_id, seq, comment) values(${user_id}, ${parent}, ${board_id},${seq}, "${comment}")
           `;
-  
- let qur = `select u.nickname ,c.* from p_comment as c left join p_user as u on c.user_id = u.id order by cmt_no desc limit 1`;
+
+  let qur = `select u.nickname ,c.* from p_comment as c left join p_user as u on c.user_id = u.id order by cmt_no desc limit 1`;
 
   console.log(query);
   try {
@@ -42,7 +42,7 @@ exports.addComment = async (req, res, next) => {
   }
 };
 
-// 댓글 수정하기 
+// 댓글 수정하기
 exports.updateComment = async (req, res, next) => {
   let user_id = req.user.id;
   let reply_id = req.body.reply_id;
@@ -79,7 +79,7 @@ exports.updateComment = async (req, res, next) => {
 exports.deleteComment = async (req, res, next) => {
   let cmt_no = req.body.cmt_no;
   let user_id = req.user.id;
-  let board_id = req.board_id
+  let board_id = req.board_id;
   // 해당 유저의 댓글이 맞는지 체크
   let query = `select * from p_comment where board_id = ${board_id}`;
 
@@ -118,7 +118,7 @@ exports.getCommentlist = async (req, res, next) => {
     res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
   }
 
-  let query = `select c.* , u.nickname from p_comment as c join p_user as u on c.user_id = u.id where board_id = ${board_id} order by created_at limit ${offset}, ${limit}`
+  let query = `select c.* , u.nickname from p_comment as c join p_user as u on c.user_id = u.id where board_id = ${board_id} order by created_at limit ${offset}, ${limit}`;
   console.log(query);
 
   try {
