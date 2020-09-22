@@ -10,7 +10,7 @@ const {
 
 const router = express.Router();
 
-router.route("/").get(getQCommentlist);
+router.route("/").post(getQCommentlist);
 router.route("/add").post(auth, addQComment);
 router.route("/update").post(auth, updateQComment);
 router.route("/delete").delete(auth, deleteQComment);
