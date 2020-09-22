@@ -45,10 +45,10 @@ exports.addComment = async (req, res, next) => {
 // 댓글 수정하기
 exports.updateComment = async (req, res, next) => {
   let user_id = req.user.id;
-  let reply_id = req.body.reply_id;
+  let cmt_no = req.body.cmt_no;
   let comment = req.body.comment;
 
-  let query = `select * from p_comment where id = ${reply_id}`;
+  let query = `select * from p_comment where cmt_no = ${cmt_no}`;
   try {
     [rows] = await connection.query(query);
     if (rows[0].user_id != user_id) {
@@ -60,7 +60,7 @@ exports.updateComment = async (req, res, next) => {
     return;
   }
 
-  query = `update p_comment set comment = "${comment}"  where id= ${reply_id}`;
+  query = `update p_comment set comment = "${comment}"  where cmt_no= ${cmt_no}`;
   console.log(query);
 
   try {
