@@ -61,7 +61,7 @@ exports.updateComment = async (req, res, next) => {
   }
 
   query = `update p_comment set comment = "${comment}"  where cmt_no = ${cmt_no}`;
-  let qur = `select * p_comment where cmt_no = ${cmt_no} `;
+  let qur = `select * from p_comment where cmt_no = ${cmt_no} `;
   console.log(query);
 
   try {
