@@ -18,6 +18,6 @@ router.route("/view").post(auth, viewBoard);
 router.route("/update").post(auth, updateBoard);
 router.route("/delete").delete(auth, deleteBoard);
 router.route("/search").post(searchBoard);
-router.route("/mywrite").get(auth, myWrite);
+router.route("/mywrite").post(auth, myWrite);
 
 module.exports = router;
