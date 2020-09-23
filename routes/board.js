@@ -7,6 +7,7 @@ const {
   deleteBoard,
   searchBoard,
   viewBoard,
+  myWrite,
 } = require("../controllers/board");
 const router = express.Router();
 
@@ -17,5 +18,6 @@ router.route("/view").post(auth, viewBoard);
 router.route("/update").post(auth, updateBoard);
 router.route("/delete").delete(auth, deleteBoard);
 router.route("/search").post(searchBoard);
+router.route("/mywrite").get(auth, myWrite);
 
 module.exports = router;
