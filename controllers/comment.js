@@ -61,7 +61,7 @@ exports.updateComment = async (req, res, next) => {
   }
 
   query = `update p_comment set comment = "${comment}"  where cmt_no = ${cmt_no}`;
-  let qur = `select * from p_comment where board_id = ${board_id} `;
+  let qur = `select u.nickname,u.email ,c.* from p_comment as c left join p_user as u on c.user_id = u.id where board_id = ${board_id} order by cmt_no  `;
   console.log(query);
 
   try {
@@ -96,10 +96,12 @@ exports.deleteComment = async (req, res, next) => {
   }
 
   query = `delete from p_comment where cmt_no = ${cmt_no} or parent = ${cmt_no}`;
+  let qur = `select u.nickname,u.email ,c.* from p_comment as c left join p_user as u on c.user_id = u.id where board_id = ${board_id} order by cmt_no  `;
 
   try {
     [result] = await connection.query(query);
-    res.status(200).json({ success: true });
+    [rows] = await connection.query(qur);
+    res.status(200).json({ success: true, items: rows });
     return;
   } catch (e) {
     res.status(500).json();
