@@ -125,7 +125,7 @@ exports.getQCommentlist = async (req, res, next) => {
     res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
   }
 
-  let query = `select c.* , u.nickname from p_comment as c join p_user as u on c.user_id = u.id where question_id = ${question_id} order by created_at limit ${offset}, ${limit}`;
+  let query = `select c.* , u.nickname,u.email from p_comment as c join p_user as u on c.user_id = u.id where question_id = ${question_id} order by created_at limit ${offset}, ${limit}`;
   console.log(query);
 
   try {

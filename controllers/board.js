@@ -81,6 +81,37 @@ exports.getBoardlist = async (req, res, next) => {
   }
 };
 
+// @desc 최신글
+// @route GET /api/v1/board
+
+exports.getBoardlist = async (req, res, next) => {
+  let offset = req.query.offset;
+  let limit = req.query.limit;
+
+  if (!offset || !limit) {
+    res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
+  }
+
+  let query = `select b.*,u.nickname,u.email,ifnull((select count(board_id) as board_id_cnt from p_boardview
+              where board_id = b.board_id group by board_id),0) as view_cnt, ifnull((select count(board_id) as board_id_cnt from p_comment
+              where board_id = b.board_id group by board_id),0) as com_cnt
+              from p_board as b left join p_user as u on b.user_id = u.id 
+              order by created_at desc limit ${offset}, ${limit}`;
+  console.log(query);
+
+  try {
+    [rows] = await connection.query(query);
+    res.status(200).json({
+      success: true,
+      items: rows,
+      cnt: rows.length,
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(400).json({ success: false });
+  }
+};
+
 // @desc    내가 쓴 게시글 수정
 // @route   POST /api/v1/board
 // @request board_id, user_id, title, content, category
