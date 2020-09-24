@@ -47,6 +47,7 @@ exports.updateComment = async (req, res, next) => {
   let user_id = req.user.id;
   let cmt_no = req.body.cmt_no;
   let comment = req.body.comment;
+  let board_id = req.body.board_id;
 
   let query = `select * from p_comment where cmt_no = ${cmt_no}`;
   try {
