@@ -34,9 +34,9 @@ exports.addComment = async (req, res, next) => {
 
   console.log(query);
   try {
-    [rows] = await connection.query(query);
-    [result] = await connection.query(qur);
-    res.status(200).json({ success: true, items: result, cnt: rows.length });
+    [result] = await connection.query(query);
+    [rows] = await connection.query(qur);
+    res.status(200).json({ success: true, items: rows, cnt: rows.length });
   } catch (e) {
     res.status(500).json({ error: e });
   }
