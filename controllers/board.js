@@ -306,3 +306,6 @@ exports.myWrite = async (req, res, next) => {
     res.status(500).json({ success: false, message: "DB Error", error: e });
   }
 };
+
+//SELECT * FROM p_board WHERE endtime > NOW() ORDER BY endtime asc;
+//SELECT * FROM p_comment WHERE user_id = 4 GROUP BY board_id,question_id;
