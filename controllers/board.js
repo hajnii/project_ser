@@ -316,7 +316,7 @@ exports.DeadlineBoard = async (req, res, next) => {
               where board_id = b.board_id group by board_id),0) as view_cnt, ifnull((select count(board_id) as board_id_cnt from p_comment
               where board_id = b.board_id group by board_id),0) as com_cnt
               from p_board as b left join p_user as u on b.user_id = u.id 
-              SELECT * FROM p_board WHERE endtime >= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY endtime asc limit ${offset},${limit}
+              WHERE endtime >= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY endtime asc limit ${offset},${limit}
             `;
   console.log(query);
   try {
