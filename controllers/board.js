@@ -309,7 +309,6 @@ exports.myWrite = async (req, res, next) => {
 
 // 마감직전 게시글 가져오기
 exports.DeadlineBoard = async (req, res, next) => {
-  let user_id = req.user.id;
   let offset = req.query.offset;
   let limit = req.query.limit;
   let query = `

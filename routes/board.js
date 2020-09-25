@@ -20,6 +20,6 @@ router.route("/update").post(auth, updateBoard);
 router.route("/delete").delete(auth, deleteBoard);
 router.route("/search").post(searchBoard);
 router.route("/mywrite").post(auth, myWrite);
-router.route("deadline").post(DeadlineBoard);
+router.route("/deadline").post(DeadlineBoard);
 
 module.exports = router;
