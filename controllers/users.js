@@ -147,13 +147,13 @@ exports.loginUser = async (req, res, next) => {
   let email = req.body.email;
   let passwd = req.body.passwd;
 
-  let query = "select * from p_user where email = ? ";
-  let data = [email];
+  let query = `select * from p_user where email = "${email}" `;
 
   let user_id;
 
+  console.log(query);
   try {
-    [rows] = await connection.query(query, data);
+    [rows] = await connection.query(query);
     let hashedPasswd = rows[0].passwd;
     user_id = rows[0].id;
     const isMatch = await bcrypt.compare(passwd, hashedPasswd);
@@ -164,15 +164,20 @@ exports.loginUser = async (req, res, next) => {
       return;
     }
   } catch (e) {
-    res.status(500).json();
+    res.status(500).json({ error: e });
     return;
   }
   const token = jwt.sign({ user_id: user_id }, process.env.ACCESS_TOKEN_SECRET);
   query = "insert into p_token (user_id, token) values (?,?)";
+  let qur = `select nickname from p_user where email = "${email}"`;
   data = [user_id, token];
+
   try {
     [result] = await connection.query(query, data);
-    res.status(200).json({ success: true, email: email, token: token });
+    [rows] = await connection.query(qur);
+    res
+      .status(200)
+      .json({ success: true, email: email, token: token, items: rows });
   } catch (e) {
     res.status(500).json();
   }
