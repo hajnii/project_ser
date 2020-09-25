@@ -306,3 +306,24 @@ exports.myWrite = async (req, res, next) => {
     res.status(500).json({ success: false, message: "DB Error", error: e });
   }
 };
+
+// 마감직전 게시글 가져오기
+exports.DeadlineBoard = async (req, res, next) => {
+  let user_id = req.user.id;
+  let offset = req.query.offset;
+  let limit = req.query.limit;
+  let query = `
+              select b.*,u.nickname,u.email,ifnull((select count(board_id) as board_id_cnt from p_boardview
+              where board_id = b.board_id group by board_id),0) as view_cnt, ifnull((select count(board_id) as board_id_cnt from p_comment
+              where board_id = b.board_id group by board_id),0) as com_cnt
+              from p_board as b left join p_user as u on b.user_id = u.id 
+              WHERE endtime > NOW() ORDER BY endtime asc limit ${offset},${limit}
+            `;
+  console.log(query);
+  try {
+    [rows, fields] = await connection.query(query);
+    res.status(200).json({ success: true, items: rows, cnt: rows.length });
+  } catch (e) {
+    res.status(500).json({ success: false, message: "DB Error", error: e });
+  }
+};
