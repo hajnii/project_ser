@@ -13,10 +13,27 @@ exports.addFavorite = async (req, res, next) => {
   let user_id = req.user.id;
 
   let query = `insert into scrap_board (board_id, user_id) values (${board_id},${user_id})`;
+  let bqur = `select * from p_board where board_id = ${board_id}`;
   console.log(query);
   try {
     [result] = await connection.query(query);
-    res.status(200).json({ success: true });
+    [rows] = await connection.query(bqur);
+    res.status(200).json({ success: true, items: rows });
+  } catch (e) {
+    if (e.errno == 1062) {
+      res.status(500).json({ message: "이미 즐겨찾기에 추가되었습니다." });
+    } else {
+      res.status(500).json({ error: e });
+    }
+  }
+
+  let question_id = req.body.question_id;
+  let query = `insert into scrap_board (question_id, user_id) values (${question_id},${user_id})`;
+  let qqur = `select * from p_board where question_id = ${question_id}`;
+  try {
+    [result] = await connection.query(query);
+    [rows] = await connection.query(qqur);
+    res.status(200).json({ success: true, items: rows });
   } catch (e) {
     if (e.errno == 1062) {
       res.status(500).json({ message: "이미 즐겨찾기에 추가되었습니다." });
