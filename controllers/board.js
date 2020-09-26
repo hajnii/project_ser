@@ -62,7 +62,8 @@ exports.getBoardlist = async (req, res, next) => {
     res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
   }
 
-  let query = `select b.*,u.nickname,u.email, ifnull((select count(board_id) as board_id_cnt from p_comment
+  let query = `select b.*,u.nickname,u.email, ifnull((select count(board_id) as board_id_cnt from p_boardview
+              where board_id = b.board_id group by board_id),0) as view_cnt, ifnull((select count(board_id) as board_id_cnt from p_comment
               where board_id = b.board_id group by board_id),0) as com_cnt
               from p_board as b left join p_user as u on b.user_id = u.id 
               order by created_at desc limit ${offset}, ${limit}`;
