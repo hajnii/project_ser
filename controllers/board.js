@@ -217,7 +217,7 @@ exports.viewBoard = async (req, res, next) => {
     return;
   }
 
-  query = `select b.* , (select count(*) from p_boardview where board_id =${board_id}) as view_cnt , (select count(*) from scrap_board where board_id = ${board_id} and user_id = ${user_id}) as num
+  query = `select b.* , (select count(*) from p_boardview where board_id =${board_id}) as view_cnt , (select count(*) from scrap_board where board_id = ${board_id} and user_id = ${user_id}) as is_favorite
   from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1;`;
 
   try {
