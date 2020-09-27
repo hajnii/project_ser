@@ -13,7 +13,7 @@ exports.addFavorite = async (req, res, next) => {
   let user_id = req.user.id;
 
   let bquery = `insert into scrap_board (board_id, user_id) values (${board_id},${user_id})`;
-  let bqur = `select * , (select count(*) from scrap_board where board_id = ${board_id} and user_id = ${user_id}) as is_favoritefrom p_board where board_id = ${board_id}`;
+  let bqur = `select * , (select count(*) from scrap_board where board_id = ${board_id} and user_id = ${user_id}) as is_favorite from p_board where board_id = ${board_id}`;
   try {
     [result] = await connection.query(bquery);
     [rows] = await connection.query(bqur);
