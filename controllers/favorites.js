@@ -71,10 +71,11 @@ exports.deleteFavorite = async (req, res, next) => {
   let user_id = req.user.id;
 
   let query = `delete from scrap_board where user_id = ${user_id} and board_id = ${board_id}`;
-
+  let qury = `select count(*) as is_favorite from scrap_board where board_id = ${board_id} and user_id = ${user_id}`; 
   try {
     [result] = await connection.query(query);
-    res.status(200).json({ success: true });
+      [rows] = await connection.query(qury);
+    res.status(200).json({ success: true , items: rows});
   } catch (e) {
     res.status(500).json();
   }
