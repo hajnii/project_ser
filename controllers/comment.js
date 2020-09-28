@@ -137,3 +137,22 @@ exports.getCommentlist = async (req, res, next) => {
     res.status(400).json({ success: false });
   }
 };
+
+// 내가 쓴 댓글 불러오기
+
+exports.getMycomment = async (req, res, next) => {
+  let user_id = req.user.id;
+
+  let query = `SELECT * FROM p_comment WHERE user_id = ${user_id} GROUP BY board_id,question_id;`;
+
+  try {
+    [rows] = await connection.query(query);
+    res.status(200).json({
+      success: true,
+      items: rows,
+      cnt: rows.length,
+    });
+  } catch (e) {
+    res.status(400).json({ success: false });
+  }
+};

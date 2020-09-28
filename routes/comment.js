@@ -5,6 +5,7 @@ const {
   updateComment,
   deleteComment,
   getCommentlist,
+  getMycomment,
 } = require("../controllers/comment");
 
 const router = express.Router();
@@ -14,6 +15,7 @@ router.route("/").post(getCommentlist);
 router.route("/add").post(auth, addComment);
 router.route("/update").post(auth, updateComment);
 router.route("/delete").delete(auth, deleteComment);
+router.route("/mycomment").get(auth, getMycomment);
 
 // w질문게시판
 
