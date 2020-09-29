@@ -86,6 +86,7 @@ exports.deleteQComment = async (req, res, next) => {
   let cmt_no = req.body.cmt_no;
   let user_id = req.user.id;
   // 해당 유저의 댓글이 맞는지 체크
+  let question_id = req.body.question_id;
   let query = `select * from p_comment where cmt_no = ${cmt_no}`;
 
   try {
