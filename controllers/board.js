@@ -256,9 +256,7 @@ exports.searchBoard = async (req, res, next) => {
 // 내가 쓴 글 가져오기
 exports.myWrite = async (req, res, next) => {
   let user_id = req.user.id;
-  let offset = req.query.offset;
-  let limit = req.query.limit;
-  let board_id = req.body.board_id;
+  let order = req.query.order;
 
   // 해당 유저의 게시글이 맞는지 체크
   let query = `select * from p_user where id = ${user_id}`;
@@ -280,7 +278,7 @@ exports.myWrite = async (req, res, next) => {
               from p_board b join p_user u on b.user_id = u.id where user_id = ${user_id}
               union
               select 'question' as type, null as board_id,question_id as board_id,title,q.category,content,q.created_at, u.nickname,u.email,q.user_id,(select count(*) from p_boardview where question_id =q. question_id) as view_cnt,(select count(*) from p_comment where question_id = q. question_id) as com_cnt,null as starttime,null asendtime
-              from p_question q join p_user u on q.user_id = u.id where user_id = ${user_id} order by created_at desc limit ${offset},${limit}
+              from p_question q join p_user u on q.user_id = u.id where user_id = ${user_id} order by created_at desc ${order}
             `;
   console.log(query);
   try {
