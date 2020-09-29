@@ -49,7 +49,8 @@ exports.updateQComment = async (req, res, next) => {
   let user_id = req.user.id;
   let cmt_no = req.body.cmt_no;
   let comment = req.body.comment;
-
+  let question_id = req.body.question_id;
+  
   let query = `select * from p_comment where cmt_no = ${cmt_no}`;
   try {
     [rows] = await connection.query(query);
