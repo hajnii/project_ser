@@ -278,7 +278,7 @@ exports.myWrite = async (req, res, next) => {
               from p_board b join p_user u on b.user_id = u.id where user_id = ${user_id}
               union
               select 'question' as type, null as board_id,question_id as board_id,title,q.category,content,q.created_at, u.nickname,u.email,q.user_id,(select count(*) from p_boardview where question_id =q. question_id) as view_cnt,(select count(*) from p_comment where question_id = q. question_id) as com_cnt,null as starttime,null asendtime
-              from p_question q join p_user u on q.user_id = u.id where user_id = ${user_id} order by created_at desc ${order}
+              from p_question q join p_user u on q.user_id = u.id where user_id = ${user_id} order by created_at ${order}
             `;
   console.log(query);
   try {
