@@ -177,7 +177,7 @@ exports.loginUser = async (req, res, next) => {
     [rows] = await connection.query(qur);
     res
       .status(200)
-      .json({ success: true, email: email, token: token, items: rows });
+      .json({ success: true, user_id: user_id, email: email, token: token, items: rows });
   } catch (e) {
     res.status(500).json();
   }
