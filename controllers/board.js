@@ -229,20 +229,29 @@ exports.viewBoard = async (req, res, next) => {
 // }
 
 // @desc      검색하는 API
-// @route     GET/api/v1/board/search?keyword=Y&offset=0&limit=25
-// @request   keyword,offset,limit
+// @route     GET/api/v1/board/search?category=Android&keyword=내용
+// @request   category,keyword
 // @response  title
 
 exports.searchBoard = async (req, res, next) => {
-  let offset = req.query.offset;
-  let limit = req.query.limit;
-  let category = req.body.category;
+  let category = req.query.category;
   let keyword = req.query.keyword;
+
+  let b_query_where = '';
+  let q_query_where = '';
+
+  if (!!category) {
+      b_query_where = ` and b.category = '${category}' `;
+      q_query_where = ` and q.category = '${category}' `;
+  }
+  
   let query = `
-              select b.*,u.nickname,ifnull((select count(board_id) as board_id_cnt from p_boardview
-              where board_id = b.board_id group by board_id),0) as view_cnt from p_board as b 
-              join p_user as u on b.user_id = u.id WHERE category = "${category}"
-              and (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit ${offset},${limit}
+              select 'board' as type,board_id,null as question_id,title,b.category,content,b.created_at,u.nickname,u.email,b.user_id,(select count(*) from p_boardview where board_id = b.board_id) as view_cnt,(select count(*) from p_comment where board_id = b.board_id) as com_cnt,b.starttime,b.endtime
+              from p_board b join p_user u on b.user_id = u.id where (b.title like '%${keyword}%' or b.content like '%${keyword}%') ${b_query_where}
+              union
+              select 'question' as type, null as board_id,question_id as board_id,title,q.category,content,q.created_at, u.nickname,u.email,q.user_id,(select count(*) from p_boardview where question_id =q. question_id) as view_cnt,(select count(*) from p_comment where question_id = q. question_id) as com_cnt,null as starttime,null asendtime
+              from p_question q join p_user u on q.user_id = u.id where (q.title like '%${keyword}%' or q.content like '%${keyword}%') ${q_query_where}
+              order by created_at
             `;
   console.log(query);
   try {
