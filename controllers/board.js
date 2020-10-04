@@ -237,20 +237,28 @@ exports.searchBoard = async (req, res, next) => {
   let category = req.query.category;
   let keyword = req.query.keyword;
 
-  let b_query_where = '';
-  let q_query_where = '';
+  let b_keyword_query_where = '';
+  let q_keyword_query_where = '';
+
+  let b_category_query_where = '';
+  let q_category_query_where = '';
+
+  if (!!keyword) {
+    b_keyword_query_where = `and (b.title like '%${keyword}%' or b.content like '%${keyword}%')`;
+    q_keyword_query_where = `and (q.title like '%${keyword}%' or q.content like '%${keyword}%')`;
+  }
 
   if (!!category) {
-      b_query_where = ` and b.category = '${category}' `;
-      q_query_where = ` and q.category = '${category}' `;
+      b_category_query_where = ` and b.category = '${category}' `;
+      q_category_query_where = ` and q.category = '${category}' `;
   }
   
   let query = `
               select 'board' as type,board_id,null as question_id,title,b.category,content,b.created_at,u.nickname,u.email,b.user_id,(select count(*) from p_boardview where board_id = b.board_id) as view_cnt,(select count(*) from p_comment where board_id = b.board_id) as com_cnt,b.starttime,b.endtime
-              from p_board b join p_user u on b.user_id = u.id where (b.title like '%${keyword}%' or b.content like '%${keyword}%') ${b_query_where}
+              from p_board b join p_user u on b.user_id = u.id where 1=1 ${b_keyword_query_where} ${b_category_query_where}
               union
               select 'question' as type, null as board_id,question_id as board_id,title,q.category,content,q.created_at, u.nickname,u.email,q.user_id,(select count(*) from p_boardview where question_id =q. question_id) as view_cnt,(select count(*) from p_comment where question_id = q. question_id) as com_cnt,null as starttime,null asendtime
-              from p_question q join p_user u on q.user_id = u.id where (q.title like '%${keyword}%' or q.content like '%${keyword}%') ${q_query_where}
+              from p_question q join p_user u on q.user_id = u.id where 1=1 ${q_keyword_query_where} ${q_category_query_where}
               order by created_at
             `;
   console.log(query);
