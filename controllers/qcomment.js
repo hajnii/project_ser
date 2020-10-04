@@ -45,6 +45,7 @@ exports.addQComment = async (req, res, next) => {
 };
 
 // 댓글 수정하기
+// @route   post /api/v1/comment
 exports.updateQComment = async (req, res, next) => {
   let user_id = req.user.id;
   let cmt_no = req.body.cmt_no;
@@ -59,11 +60,12 @@ exports.updateQComment = async (req, res, next) => {
       return;
     }
   } catch (e) {
+    console.log(e);
     res.status(500).json({ message: "여기인거같은데" });
     return;
   }
 
-  query = `update p_comment set comment = "${comment}"  where cmt_no= ${cmt_no}`;
+  query = `update p_comment set comment = "${comment}"  where cmt_no= ${cmt_no} && question_id = ${question_id}`;
 
   let qur = `select u.nickname,u.email ,c.* from p_comment as c left join p_user as u on c.user_id = u.id where question_id = ${question_id} order by cmt_no `;
 
