@@ -119,7 +119,7 @@ exports.topBoard = async (req, res, next) => {
   let query = `select b.*,u.nickname,u.email,ifnull((select count(board_id) as board_id_cnt from p_boardview where board_id = b.board_id group by board_id),0) as view_cnt,
               ifnull((select count(board_id) as board_id_cnt from scrap_board where board_id = b.board_id group by board_id),0) as like_cnt ,
               ifnull((select count(board_id) as board_id_cnt from p_comment where board_id = b.board_id group by board_id),0) as com_cnt  from p_board as b left join p_user as u on b.user_id = u.id
-              order by like_cnt ${order},view_cnt ${order} ${top_limit}`;
+              order by view_cnt ${order},com_cnt ${order} ${top_limit}`;
   try {
     [result] = await connection.query(query);
     res.status(200).json({ success: true, items: result, cnt: result.length });
