@@ -45,21 +45,6 @@ exports.addFavorite = async (req, res, next) => {
       res.status(500).json({ error: e });
     }
   }
-
-  // let question_id = req.body.question_id;
-  // let query = `insert into scrap_board (question_id, user_id) values (${question_id},${user_id})`;
-  // let qqur = `select * from p_board where question_id = ${question_id}`;
-  // try {
-  //   [result] = await connection.query(query);
-  //   [rows] = await connection.query(qqur);
-  //   res.status(200).json({ success: true, items: rows });
-  // } catch (e) {
-  //   if (e.errno == 1062) {
-  //     res.status(500).json({ message: "이미 즐겨찾기에 추가되었습니다." });
-  //   } else {
-  //     res.status(500).json({ error: e });
-  //   }
-  // }
 };
 
 // @desc    즐겨찾기 저장된 게시글 가져오는 API
@@ -123,14 +108,21 @@ exports.deleteFavorite = async (req, res, next) => {
 
 exports.topBoard = async (req, res, next) => {
   let order = req.query.order;
+  let limit = req.query.limit;
+
+  let top_limit = "";
+
+  if (!!limit) {
+    top_limit = `limit ${limit}`;
+  }
 
   let query = `select b.*,u.nickname,u.email,ifnull((select count(board_id) as board_id_cnt from p_boardview where board_id = b.board_id group by board_id),0) as view_cnt,
               ifnull((select count(board_id) as board_id_cnt from scrap_board where board_id = b.board_id group by board_id),0) as like_cnt ,
               ifnull((select count(board_id) as board_id_cnt from p_comment where board_id = b.board_id group by board_id),0) as com_cnt  from p_board as b left join p_user as u on b.user_id = u.id
-              order by like_cnt ${order},view_cnt ${order}`;
+              order by like_cnt ${order},view_cnt ${order} ${top_limit}`;
   try {
     [result] = await connection.query(query);
-    res.status(200).json({ success: true, items: result });
+    res.status(200).json({ success: true, items: result, cnt: result.length });
   } catch (e) {
     res.status(500).json();
   }
