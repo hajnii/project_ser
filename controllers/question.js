@@ -45,8 +45,12 @@ exports.uploadQuestion = async (req, res, next) => {
 // @response success
 
 exports.latestQuestion = async (req, res, next) => {
-  let offset = req.query.offset;
   let limit = req.query.limit;
+  let q_limit_query = "";
+
+  if (!!limit) {
+    q_limit_query = `limit ${limit}`;
+  }
 
   if (!offset || !limit) {
     res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
@@ -56,7 +60,7 @@ exports.latestQuestion = async (req, res, next) => {
                 where question_id = q.question_id group by question_id),0) as view_cnt, ifnull((select count(question_id) as question_id_cnt from p_comment
 			        	where question_id = q.question_id group by question_id),0) as com_cnt
                 from p_question as q left join p_user as u on q.user_id = u.id 
-                order by created_at desc limit ${offset}, ${limit}`;
+                order by created_at desc ${q_limit_query}`;
   console.log(query);
 
   try {
