@@ -56,12 +56,18 @@ exports.BoardUpload = async (req, res, next) => {
 
 exports.getBoardlist = async (req, res, next) => {
   let order = req.query.order;
+  let limit = req.query.limit;
+  let b_limit_query = "";
+
+  if (!!limit) {
+    b_limit_query = `limit ${limit}`;
+  }
 
   let query = `select b.*,u.nickname,u.email, ifnull((select count(board_id) as board_id_cnt from p_boardview
               where board_id = b.board_id group by board_id),0) as view_cnt, ifnull((select count(board_id) as board_id_cnt from p_comment
               where board_id = b.board_id group by board_id),0) as com_cnt
               from p_board as b left join p_user as u on b.user_id = u.id 
-              order by created_at ${order}`;
+              order by created_at ${order} ${b_limit_query}`;
   console.log(query);
 
   try {
@@ -237,11 +243,11 @@ exports.searchBoard = async (req, res, next) => {
   let category = req.query.category;
   let keyword = req.query.keyword;
 
-  let b_keyword_query_where = '';
-  let q_keyword_query_where = '';
+  let b_keyword_query_where = "";
+  let q_keyword_query_where = "";
 
-  let b_category_query_where = '';
-  let q_category_query_where = '';
+  let b_category_query_where = "";
+  let q_category_query_where = "";
 
   if (!!keyword) {
     b_keyword_query_where = `and (b.title like '%${keyword}%' or b.content like '%${keyword}%')`;
@@ -249,10 +255,10 @@ exports.searchBoard = async (req, res, next) => {
   }
 
   if (!!category) {
-      b_category_query_where = ` and b.category = '${category}' `;
-      q_category_query_where = ` and q.category = '${category}' `;
+    b_category_query_where = ` and b.category = '${category}' `;
+    q_category_query_where = ` and q.category = '${category}' `;
   }
-  
+
   let query = `
               select 'board' as type,board_id,null as question_id,title,b.category,content,b.created_at,u.nickname,u.email,b.user_id,(select count(*) from p_boardview where board_id = b.board_id) as view_cnt,(select count(*) from p_comment where board_id = b.board_id) as com_cnt,b.starttime,b.endtime
               from p_board b join p_user u on b.user_id = u.id where 1=1 ${b_keyword_query_where} ${b_category_query_where}
