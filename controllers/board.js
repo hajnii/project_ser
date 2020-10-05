@@ -334,14 +334,19 @@ exports.myWrite = async (req, res, next) => {
 
 // 마감직전 게시글 가져오기
 exports.DeadlineBoard = async (req, res, next) => {
-  let offset = req.query.offset;
   let limit = req.query.limit;
+
+  let deadline_limit = "";
+
+  if (!!limit) {
+    deadline_limit = `limit ${limit}`;
+  }
   let query = `
               select b.*,u.nickname,u.email,ifnull((select count(board_id) as board_id_cnt from p_boardview
               where board_id = b.board_id group by board_id),0) as view_cnt, ifnull((select count(board_id) as board_id_cnt from p_comment
               where board_id = b.board_id group by board_id),0) as com_cnt
               from p_board as b left join p_user as u on b.user_id = u.id 
-              WHERE endtime >= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY endtime asc limit ${offset},${limit}
+              WHERE endtime >= DATE_FORMAT(NOW(),'%Y-%m-%d') ORDER BY endtime asc ${deadline_limit}
             `;
   console.log(query);
   try {
