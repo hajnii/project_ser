@@ -84,9 +84,7 @@ exports.getBoardlist = async (req, res, next) => {
   }
 };
 
-// @desc    내가 쓴
-
-// 게시글 수정
+// @desc    내가 쓴 게시글 수정
 // @route   POST /api/v1/board
 // @request board_id, user_id, title, content, category
 

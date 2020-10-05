@@ -10,13 +10,33 @@ exports.addFavorite = async (req, res, next) => {
   // 즐겨찾기에 이미 추가된 게시글은, 즐겨찾기에 추가되지 않도록 한다.
 
   let board_id = req.body.board_id;
+  let question_id = req.body.question_id;
   let user_id = req.user.id;
 
-  let bquery = `insert into scrap_board (board_id, user_id) values (${board_id},${user_id})`;
-  let bqur = `select * , (select count(*) from scrap_board where board_id = ${board_id} and user_id = ${user_id}) as is_favorite from p_board where board_id = ${board_id}`;
+  //insert문
+  let b_favorite_plus = "";
+  let q_favorite_plus = "";
+
+  // select문
+  let b_select = "";
+  let q_select = "";
+
+  if (!!board_id) {
+    b_favorite_plus = `(board_id, user_id) values (${board_id},${user_id})`;
+    b_select = `board_id = ${board_id} and user_id = ${user_id}) as is_favorite from p_board where board_id = ${board_id}`;
+  }
+  if (!!question_id) {
+    q_favorite_plus = `(question_id, user_id) values (${question_id},${user_id})`;
+    q_select = `question_id = ${question_id} and user_id = ${user_id}) as is_favorite from p_question where question_id = ${question_id}`;
+  }
+
+  let query = `insert into scrap_board ${b_favorite_plus} ${q_favorite_plus} `;
+  let qur = `select * , (select count(*) from scrap_board where ${b_select} ${q_select}`;
+
+  console.log("@@@@@@@@@@@", qur);
   try {
-    [result] = await connection.query(bquery);
-    [rows] = await connection.query(bqur);
+    [result] = await connection.query(query);
+    [rows] = await connection.query(qur);
     res.status(200).json({ success: true, items: rows });
   } catch (e) {
     if (e.errno == 1062) {
@@ -68,16 +88,34 @@ exports.getMyFavorites = async (req, res, next) => {
 
 exports.deleteFavorite = async (req, res, next) => {
   let board_id = req.body.board_id;
+  let question_id = req.body.question_id;
   let user_id = req.user.id;
 
-  let query = `delete from scrap_board where user_id = ${user_id} and board_id = ${board_id}`;
-  let qury = `select count(*) as is_favorite from scrap_board where board_id = ${board_id} and user_id = ${user_id}`;
+  let b_delete = "";
+  let q_delete = "";
+
+  let b_select = "";
+  let q_select = "";
+
+  if (!!board_id) {
+    b_delete = `and board_id = ${board_id}`;
+    b_select = `board_id = ${board_id}`;
+  }
+  if (!!question_id) {
+    q_delete = `and question_id = ${question_id}`;
+    q_select = `question_id = ${question_id}`;
+  }
+
+  let query = `delete from scrap_board where user_id = ${user_id} ${b_delete} ${q_delete}`;
+  let qury = `select count(*) as is_favorite from scrap_board where ${b_select} ${q_select} and user_id = ${user_id}`;
+  console.log(query);
+  console.log(qury);
   try {
     [result] = await connection.query(query);
     [rows] = await connection.query(qury);
     res.status(200).json({ success: true, items: rows });
   } catch (e) {
-    res.status(500).json();
+    res.status(500).json({ error: e });
   }
 };
 

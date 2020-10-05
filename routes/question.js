@@ -17,5 +17,4 @@ router.route("/latestQuestion").get(latestQuestion);
 router.route("/view").post(auth, viewQuestion);
 router.route("/update").put(auth, updateQuestion);
 router.route("/delete").delete(auth, deleteQuestion);
-router.route("/search").post(searchQuestion);
 module.exports = router;

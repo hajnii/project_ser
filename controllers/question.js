@@ -104,7 +104,8 @@ exports.viewQuestion = async (req, res, next) => {
     return;
   }
 
-  query = `select q.* ,u.nickname, (select count(*) from p_boardview where question_id = ${question_id}) as view_cnt
+  query = `select q.* ,u.nickname, (select count(*) from p_boardview where question_id = ${question_id}) as view_cnt,
+  (select count(*) from scrap_board where question_id = ${question_id} and user_id = ${user_id}) as is_favorite
   from p_question as q join p_user as u on q.user_id = u.id where question_id =  ${question_id} limit 1`;
   console.log(query);
 
@@ -193,29 +194,5 @@ exports.deleteQuestion = async (req, res, next) => {
   } catch (e) {
     res.status(500).json();
     return;
-  }
-};
-
-// @desc      검색하는 API
-// @route     POST/api/v1/question/search?keyword=Y
-// @request   keyword
-// @response  success
-
-exports.searchQuestion = async (req, res, next) => {
-  let offset = req.query.offset;
-  let limit = req.query.limit;
-  let category = req.body.category;
-  let keyword = req.query.keyword;
-
-  let query = `select q.*,u.nickname,ifnull((select count(question_id) as question_id_cnt from p_boardview
-              where question_id = q.question_id group by question_id),0) as view_cnt from p_question as q 
-            join p_user as u on q.user_id = u.id WHERE category = "${category}"
-            and (title LIKE '%${keyword}%' or content LIKE '%${keyword}%') limit ${offset}, ${limit}`;
-  console.log(query);
-  try {
-    [rows, fields] = await connection.query(query);
-    res.status(200).json({ success: true, items: rows, cnt: rows.length });
-  } catch (e) {
-    res.status(500).json({ success: false, message: "DB Error", error: e });
   }
 };
