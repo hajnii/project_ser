@@ -56,12 +56,12 @@ exports.BoardUpload = async (req, res, next) => {
 
 exports.getBoardlist = async (req, res, next) => {
   let order = req.query.order;
-  let limit = req.query.limit;
+  // let limit = req.query.limit;
   let offset = req.query.offset;
   let b_limit_query = "";
 
   if (!!limit) {
-    b_limit_query = `limit ${offset},${limit}`;
+    b_limit_query = `limit ${limit}`;
   }
 
   let query = `select b.*,u.nickname,u.email, ifnull((select count(board_id) as board_id_cnt from p_boardview
