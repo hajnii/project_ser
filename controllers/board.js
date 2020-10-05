@@ -56,8 +56,8 @@ exports.BoardUpload = async (req, res, next) => {
 
 exports.getBoardlist = async (req, res, next) => {
   let order = req.query.order;
-  // let limit = req.query.limit;
-  let offset = req.query.offset;
+  let limit = req.query.limit;
+  // let offset = req.query.offset;
   let b_limit_query = "";
 
   if (!!limit) {
