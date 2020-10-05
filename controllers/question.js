@@ -52,10 +52,6 @@ exports.latestQuestion = async (req, res, next) => {
     q_limit_query = `limit ${limit}`;
   }
 
-  if (!offset || !limit) {
-    res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
-  }
-
   let query = `select q.*,u.nickname,ifnull((select count(question_id) as board_id_cnt from p_boardview
                 where question_id = q.question_id group by question_id),0) as view_cnt, ifnull((select count(question_id) as question_id_cnt from p_comment
 			        	where question_id = q.question_id group by question_id),0) as com_cnt
