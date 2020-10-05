@@ -9,6 +9,7 @@ const {
   viewBoard,
   myWrite,
   DeadlineBoard,
+  nonmemberBoard,
 } = require("../controllers/board");
 const router = express.Router();
 
@@ -21,5 +22,6 @@ router.route("/delete").delete(auth, deleteBoard);
 router.route("/search").post(searchBoard);
 router.route("/mywrite").post(auth, myWrite);
 router.route("/deadline").post(DeadlineBoard);
+router.route("/nomem").post(nonmemberBoard);
 
 module.exports = router;

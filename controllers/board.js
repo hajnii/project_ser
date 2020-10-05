@@ -203,6 +203,27 @@ exports.viewBoard = async (req, res, next) => {
   }
 };
 
+// @desc    게시글 상세보기(비회원)
+// @route   POST /api/v1/board
+// @request board_id
+exports.nonmemberBoard = async (req, res, next) => {
+  // console.log(req);
+  let board_id = req.body.board_id;
+
+  let query = `select b.* , (select count(*) from p_boardview where board_id =${board_id}) as view_cnt , 
+  (select count(*) from scrap_board where board_id = ${board_id}) as is_favorite
+  from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1;`;
+
+  try {
+    [data] = await connection.query(query);
+    res.status(200).json({ data: data });
+    return;
+  } catch (e) {
+    res.status(500).json();
+    return;
+  }
+};
+
 // 누를때마다 조회수 +1
 // exports.viewBoard = async (req, res, next) => {
 // // console.log(req);
