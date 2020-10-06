@@ -104,7 +104,7 @@ exports.deleteFavorite = async (req, res, next) => {
   }
 };
 
-// 인기글 정렬
+// 보드인기글 정렬
 
 exports.topBoard = async (req, res, next) => {
   let order = req.query.order;
@@ -151,3 +151,28 @@ exports.mylikeBoard = async (req, res, next) => {
     res.status(400).json({ success: false });
   }
 }
+
+// 질문인기글
+
+exports.qtopBoard = async (req, res, next) => {
+  let order = req.query.order;
+  let limit = req.query.limit;
+
+  let top_limit = "";
+
+  if (!!limit) {
+    top_limit = `limit ${limit}`;
+  }
+
+  let query = `select b.*,u.nickname,u.email,ifnull((select count(question_id) as question_id_cnt from p_boardview where question_id = b.question_id group by question_id),0) as view_cnt,
+  ifnull((select count(question_id) as question_id_cnt from scrap_board where question_id = b.question_id group by question_id),0) as like_cnt ,
+  ifnull((select count(question_id) as question_id_cnt from p_comment where question_id = b.question_id group by question_id),0) as com_cnt  from p_question as b left join p_user as u on b.user_id = u.id
+  order by view_cnt ${order},com_cnt ${order} ${top_limit}`;
+  try {
+    [result] = await connection.query(query);
+    res.status(200).json({ success: true, items: result, cnt: result.length });
+  } catch (e) {
+    res.status(500).json();
+  }
+};
+;
