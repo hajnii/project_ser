@@ -4,6 +4,7 @@ const {
   getMyFavorites,
   deleteFavorite,
   topBoard,
+  mylikeBoard,
 } = require("../controllers/favorites");
 const { addFavorite } = require("../controllers/favorites");
 
@@ -16,5 +17,6 @@ router
   .get(auth, getMyFavorites)
   .delete(auth, deleteFavorite);
 router.route("/topboard").get(topBoard);
+router.route("/mylike").get(auth,mylikeBoard);
 
 module.exports = router;
