@@ -119,6 +119,27 @@ exports.viewQuestion = async (req, res, next) => {
   }
 };
 
+// @desc    게시글 상세보기(비회원)
+// @route   POST /api/v1/board
+// @request board_id
+exports.qmemberBoard = async (req, res, next) => {
+  // console.log(req);
+  let question_id = req.body.question_id;
+
+  let query = `select q.* , (select count(*) from p_boardview where question_id = ${question_id}) as view_cnt , 
+  (select count(*) from scrap_board where question_id = ${question_id}) as is_favorite
+  from p_question as q left join p_user as u on q.question_id = u.id where question_id = ${question_id};`;
+
+  try {
+    [data] = await connection.query(query);
+    res.status(200).json({ data: data });
+    return;
+  } catch (e) {
+    res.status(500).json();
+    return;
+  }
+};
+
 // @desc    내가 쓴 게시글 수정
 // @route   PUT /api/v1/question/update
 // @request question_id, user_id, title, content, category, user_id(auth)
