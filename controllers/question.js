@@ -39,9 +39,9 @@ exports.uploadQuestion = async (req, res, next) => {
     return;
   }
 };
-// @desc 게시글 가져오기(10개씩)
-// @route GET /api/v1/question/get
-// @request title, content, category
+// @desc 최신순으로 질문 게시글 가져오는 API
+// @route GET /api/v1/question/lastestQuestion
+// @request limit
 // @response success
 
 exports.latestQuestion = async (req, res, next) => {
@@ -52,8 +52,7 @@ exports.latestQuestion = async (req, res, next) => {
     q_limit_query = `limit ${limit}`;
   }
 
-  let query = `select q.*,u.nickname,ifnull((select count(question_id) as board_id_cnt from p_boardview
-                where question_id = q.question_id group by question_id),0) as view_cnt, ifnull((select count(question_id) as question_id_cnt from p_comment
+  let query = `select q.*,u.nickname,ifnull((select count(question_id) from p_boardview where question_id = q.question_id group by question_id),0) as view_cnt, ifnull((select count(question_id) as question_id_cnt from p_comment
 			        	where question_id = q.question_id group by question_id),0) as com_cnt
                 from p_question as q left join p_user as u on q.user_id = u.id 
                 order by created_at desc ${q_limit_query}`;
@@ -61,20 +60,10 @@ exports.latestQuestion = async (req, res, next) => {
 
   try {
     [rows] = await connection.query(query);
-    // let created_at = rows[0].created_at;
-    // let mili_movieTime = new Date(created_at).getTime;
-
-    // rows = rows.map(function (row) {
-    //   return Object.assign({}, row, {
-    //     created_date: moment(row.created_date).format("YYYY-MM-DD HH:mm:ss"),
-    //   });
-    // });
-
     res.status(200).json({
       success: true,
       items: rows,
       cnt: rows.length,
-      //   mili_movieTime: mili_movieTime,
     });
   } catch (e) {
     res.status(400).json({ success: false });
@@ -120,8 +109,9 @@ exports.viewQuestion = async (req, res, next) => {
 };
 
 // @desc    게시글 상세보기(비회원)
-// @route   POST /api/v1/board
-// @request board_id
+// @route   POST /api/v1/question/nomem
+// @request question_id
+// @response success
 exports.qmemberBoard = async (req, res, next) => {
   // console.log(req);
   let question_id = req.body.question_id;
@@ -132,7 +122,7 @@ exports.qmemberBoard = async (req, res, next) => {
 
   try {
     [data] = await connection.query(query);
-    res.status(200).json({ data: data });
+    res.status(200).json({ data: data, success: true });
     return;
   } catch (e) {
     res.status(500).json();
@@ -144,6 +134,7 @@ exports.qmemberBoard = async (req, res, next) => {
 // @route   PUT /api/v1/question/update
 // @request question_id, user_id, title, content, category, user_id(auth)
 // @response success
+
 exports.updateQuestion = async (req, res, next) => {
   let user_id = req.user.id;
   let question_id = req.body.question_id;
@@ -185,7 +176,7 @@ exports.updateQuestion = async (req, res, next) => {
 
 // @desc    내가 쓴 게시글 삭제
 // @route   DELETE /api/v1/question/delete
-// @request question_id, user_id, title, content, category, user_id(auth)
+// @request question_id, user_id(auth)
 // @response success
 
 exports.deleteQuestion = async (req, res, next) => {
@@ -215,5 +206,30 @@ exports.deleteQuestion = async (req, res, next) => {
   } catch (e) {
     res.status(500).json();
     return;
+  }
+};
+
+// 질문인기글
+// @route     POST /api/v1/question/topboard
+// @request   limit
+exports.qtopBoard = async (req, res, next) => {
+  let order = req.query.order;
+  let limit = req.query.limit;
+
+  let top_limit = "";
+
+  if (!!limit) {
+    top_limit = `limit ${limit}`;
+  }
+
+  let query = `select b.*,u.nickname,u.email,ifnull((select count(question_id) as question_id_cnt from p_boardview where question_id = b.question_id group by question_id),0) as view_cnt,
+  ifnull((select count(question_id) as question_id_cnt from scrap_board where question_id = b.question_id group by question_id),0) as like_cnt ,
+  ifnull((select count(question_id) as question_id_cnt from p_comment where question_id = b.question_id group by question_id),0) as com_cnt  from p_question as b left join p_user as u on b.user_id = u.id
+  order by view_cnt ${order},com_cnt ${order} ${top_limit}`;
+  try {
+    [result] = await connection.query(query);
+    res.status(200).json({ success: true, items: result, cnt: result.length });
+  } catch (e) {
+    res.status(500).json();
   }
 };

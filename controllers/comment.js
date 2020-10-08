@@ -1,14 +1,40 @@
 const connection = require("../db/mysql_connection");
 
+// @desc 댓글 가져오기
+// @route   post /api/v1/comment/
+// @request  user_id(auth),board_id,cmt_no
+
+exports.getCommentlist = async (req, res, next) => {
+  let board_id = req.body.board_id;
+
+  if (!offset || !limit) {
+    res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
+  }
+
+  let query = `select c.* , u.email , u.nickname from p_comment as c join p_user as u on c.user_id = u.id where board_id = ${board_id} order by created_at`;
+  console.log(query);
+
+  try {
+    [rows] = await connection.query(query);
+    res.status(200).json({
+      success: true,
+      items: rows,
+      cnt: rows.length,
+    });
+  } catch (e) {
+    res.status(400).json({ success: false });
+  }
+};
+
 // @desc    게시글마다 유저가 댓글 달수 있는 API
-// @route   post /api/v1/comment
+// @route   post /api/v1/comment/add
+// @request  user_id(auth),board_id,comment,cmt_no
 exports.addComment = async (req, res, next) => {
   let user_id = req.user.id;
   let board_id = req.body.board_id;
   let comment = req.body.comment;
   let cmt_no = req.body.cmt_no;
 
-  // 1~3 seq,parent
   let seq = 1;
   let parent = null;
 
@@ -25,7 +51,6 @@ exports.addComment = async (req, res, next) => {
     res.status(500).json({ error: e });
   }
 
-  //4
   query = `
           insert into p_comment(user_id, parent, board_id, seq, comment) values(${user_id}, ${parent}, ${board_id},${seq}, "${comment}")
           `;
@@ -43,6 +68,8 @@ exports.addComment = async (req, res, next) => {
 };
 
 // 댓글 수정하기
+// @route   post /api/v1/comment/update
+// @request  user_id(auth),board_id,comment,cmt_no
 exports.updateComment = async (req, res, next) => {
   let user_id = req.user.id;
   let cmt_no = req.body.cmt_no;
@@ -78,7 +105,8 @@ exports.updateComment = async (req, res, next) => {
 };
 
 // @desc    자신이 적은 댓글 삭제하기
-// @route   Delete /api/v1/comment
+// @route   post /api/v1/comment/delete
+// @request  user_id(auth),board_id,cmt_no
 exports.deleteComment = async (req, res, next) => {
   let cmt_no = req.body.cmt_no;
   let user_id = req.user.id;
@@ -108,32 +136,5 @@ exports.deleteComment = async (req, res, next) => {
   } catch (e) {
     res.status(500).json();
     return;
-  }
-};
-
-// @desc 댓글 가져오기(15개씩)
-// @route GET /api/v1/comment
-
-exports.getCommentlist = async (req, res, next) => {
-  let offset = req.query.offset;
-  let limit = req.query.limit;
-  let board_id = req.body.board_id;
-
-  if (!offset || !limit) {
-    res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
-  }
-
-  let query = `select c.* , u.email , u.nickname from p_comment as c join p_user as u on c.user_id = u.id where board_id = ${board_id} order by created_at limit ${offset}, ${limit}`;
-  console.log(query);
-
-  try {
-    [rows] = await connection.query(query);
-    res.status(200).json({
-      success: true,
-      items: rows,
-      cnt: rows.length,
-    });
-  } catch (e) {
-    res.status(400).json({ success: false });
   }
 };

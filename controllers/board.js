@@ -7,11 +7,9 @@ const connection = require("../db/mysql_connection");
 const { query } = require("express");
 
 // @desc 게시글 업로드 하는 API
-// @route POST /api/v1/user/photo
-// @request photo, comment, user_id(auth)
+// @route POST /api/v1/board/
+// @request user_id(auth),title,content,category,starttime,endtime
 // @response success
-
-// git test
 
 exports.BoardUpload = async (req, res, next) => {
   let user_id = req.user.id;
@@ -51,22 +49,22 @@ exports.BoardUpload = async (req, res, next) => {
   }
 };
 
-// @desc 최신글
+// @desc 최신글 보여주기
 // @route GET /api/v1/board
+// @request order,limit
+// @response success
 
 exports.getBoardlist = async (req, res, next) => {
   let order = req.query.order;
   let limit = req.query.limit;
-  // let offset = req.query.offset;
   let b_limit_query = "";
 
   if (!!limit) {
     b_limit_query = `limit ${limit}`;
   }
 
-  let query = `select b.*,u.nickname,u.email, ifnull((select count(board_id) as board_id_cnt from p_boardview
-              where board_id = b.board_id group by board_id),0) as view_cnt, ifnull((select count(board_id) as board_id_cnt from p_comment
-              where board_id = b.board_id group by board_id),0) as com_cnt
+  let query = `select b.*,u.nickname,u.email, ifnull((select count(board_id) from p_boardview where board_id = b.board_id group by board_id),0) as view_cnt, 
+              ifnull((select count(board_id) from p_comment where board_id = b.board_id group by board_id),0) as com_cnt
               from p_board as b left join p_user as u on b.user_id = u.id 
               order by created_at ${order} ${b_limit_query}`;
   console.log(query);
@@ -85,8 +83,8 @@ exports.getBoardlist = async (req, res, next) => {
 };
 
 // @desc    내가 쓴 게시글 수정
-// @route   POST /api/v1/board
-// @request board_id, user_id, title, content, category
+// @route   POST /api/v1/board/update
+// @request board_id, user_id, title, content, category, starttime,endtime
 
 exports.updateBoard = async (req, res, next) => {
   let user_id = req.user.id;
@@ -105,7 +103,7 @@ exports.updateBoard = async (req, res, next) => {
       return;
     }
   } catch (e) {
-    res.status(500).json({ message: " g항 ㅇㄱ?" });
+    res.status(500).json({ message: " message " });
     return;
   }
 
@@ -131,7 +129,7 @@ exports.updateBoard = async (req, res, next) => {
 };
 
 // @desc    나의 게시글 삭제하기
-// @route   Delete /api/v1/board
+// @route   Delete /api/v1/board/delete
 // @request board_id,  user_id
 
 exports.deleteBoard = async (req, res, next) => {
@@ -165,7 +163,7 @@ exports.deleteBoard = async (req, res, next) => {
 };
 
 // @desc    게시글 상세보기(로그인 채로)
-// @route   POST /api/v1/board
+// @route   POST /api/v1/board/view
 // @request board_id,  user_id
 exports.viewBoard = async (req, res, next) => {
   // console.log(req);
@@ -191,7 +189,7 @@ exports.viewBoard = async (req, res, next) => {
 
   query = `select b.* , (select count(*) from p_boardview where board_id =${board_id}) as view_cnt , 
   (select count(*) from scrap_board where board_id = ${board_id} and user_id = ${user_id}) as is_favorite
-  from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1;`;
+  from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id};`;
 
   try {
     [data] = await connection.query(query);
@@ -204,7 +202,7 @@ exports.viewBoard = async (req, res, next) => {
 };
 
 // @desc    게시글 상세보기(비회원)
-// @route   POST /api/v1/board
+// @route   POST /api/v1/board/nomem
 // @request board_id
 exports.nonmemberBoard = async (req, res, next) => {
   // console.log(req);
@@ -212,7 +210,7 @@ exports.nonmemberBoard = async (req, res, next) => {
 
   let query = `select b.* , (select count(*) from p_boardview where board_id =${board_id}) as view_cnt , 
   (select count(*) from scrap_board where board_id = ${board_id}) as is_favorite
-  from p_board as b join p_user as u on b.user_id = u.id where board_id = ${board_id} limit 1;`;
+  from p_board as b where board_id = ${board_id};`;
 
   try {
     [data] = await connection.query(query);
@@ -257,7 +255,6 @@ exports.nonmemberBoard = async (req, res, next) => {
 // @desc      검색하는 API
 // @route     GET/api/v1/board/search?category=Android&keyword=내용
 // @request   category,keyword
-// @response  title
 
 exports.searchBoard = async (req, res, next) => {
   let category = req.query.category;
@@ -296,7 +293,9 @@ exports.searchBoard = async (req, res, next) => {
   }
 };
 
-// 마감직전 게시글 가져오기
+// @desc      마감직전 게시글 API
+// @route     POST /api/v1/board/deadline
+// @request   limit
 exports.DeadlineBoard = async (req, res, next) => {
   let limit = req.query.limit;
 
@@ -318,5 +317,30 @@ exports.DeadlineBoard = async (req, res, next) => {
     res.status(200).json({ success: true, items: rows, cnt: rows.length });
   } catch (e) {
     res.status(500).json({ success: false, message: "DB Error", error: e });
+  }
+};
+
+// 보드인기글 정렬
+// @route     POST /api/v1/board/topboard
+// @request   limit
+exports.topBoard = async (req, res, next) => {
+  let order = req.query.order;
+  let limit = req.query.limit;
+
+  let top_limit = "";
+
+  if (!!limit) {
+    top_limit = `limit ${limit}`;
+  }
+
+  let query = `select b.*,u.nickname,u.email,ifnull((select count(board_id) as board_id_cnt from p_boardview where board_id = b.board_id group by board_id),0) as view_cnt,
+              ifnull((select count(board_id) as board_id_cnt from scrap_board where board_id = b.board_id group by board_id),0) as like_cnt ,
+              ifnull((select count(board_id) as board_id_cnt from p_comment where board_id = b.board_id group by board_id),0) as com_cnt  from p_board as b left join p_user as u on b.user_id = u.id
+              order by view_cnt ${order},com_cnt ${order} ${top_limit}`;
+  try {
+    [result] = await connection.query(query);
+    res.status(200).json({ success: true, items: result, cnt: result.length });
+  } catch (e) {
+    res.status(500).json();
   }
 };

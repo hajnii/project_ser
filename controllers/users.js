@@ -75,6 +75,10 @@ exports.createUser = async (req, res, next) => {
 };
 
 // 아이디 중복확인
+// @route POST /api/v1/users/checkid
+// @request email
+// @response success token
+
 exports.checkId = async (req, res, next) => {
   let email = req.body.email;
 
@@ -107,6 +111,9 @@ exports.checkId = async (req, res, next) => {
 };
 
 // 닉네임 중복확인
+// @route POST /api/v1/users/checknik
+// @request nickname
+// @response success token
 exports.checkNickName = async (req, res, next) => {
   let nickname = req.body.nickname;
 

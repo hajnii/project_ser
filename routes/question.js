@@ -7,6 +7,7 @@ const {
   updateQuestion,
   deleteQuestion,
   qmemberBoard,
+  qtopBoard,
 } = require("../controllers/question");
 const { route } = require("./users");
 
@@ -18,4 +19,5 @@ router.route("/view").post(auth, viewQuestion);
 router.route("/update").put(auth, updateQuestion);
 router.route("/delete").delete(auth, deleteQuestion);
 router.route("/nomem").post(qmemberBoard);
+router.route("/qtopBoard").get(qtopBoard);
 module.exports = router;
