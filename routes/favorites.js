@@ -4,7 +4,6 @@ const {
   getMyFavorites,
   deleteFavorite,
   topBoard,
-  mylikeBoard,
   qtopBoard,
 } = require("../controllers/favorites");
 const { addFavorite } = require("../controllers/favorites");
@@ -18,7 +17,6 @@ router
   .get(auth, getMyFavorites)
   .delete(auth, deleteFavorite);
 router.route("/topboard").get(topBoard);
-router.route("/mylike").get(auth,mylikeBoard);
 router.route("/qtopBoard").get(qtopBoard);
 
 module.exports = router;

@@ -7,7 +7,6 @@ const {
   deleteBoard,
   searchBoard,
   viewBoard,
-  myWrite,
   DeadlineBoard,
   nonmemberBoard,
 } = require("../controllers/board");
@@ -20,7 +19,6 @@ router.route("/view").post(auth, viewBoard);
 router.route("/update").post(auth, updateBoard);
 router.route("/delete").delete(auth, deleteBoard);
 router.route("/search").post(searchBoard);
-router.route("/mywrite").post(auth, myWrite);
 router.route("/deadline").post(DeadlineBoard);
 router.route("/nomem").post(nonmemberBoard);
 
