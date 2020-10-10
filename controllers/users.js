@@ -219,7 +219,7 @@ exports.changePasswd = async (req, res, next) => {
   let name = req.body.name;
   let nickname = req.body.nickname;
   let new_passwd = req.body.new_passwd;
-
+//git test
   // 이 유저가, 맞는 유저인지 체크
   let query = "select passwd from p_user where email =?";
   let data = [email];
