@@ -218,7 +218,6 @@ exports.changePasswd = async (req, res, next) => {
   let passwd = req.body.passwd;
   let name = req.body.name;
   let nickname = req.body.nickname;
-  let gender = req.body.gender;
   let new_passwd = req.body.new_passwd;
 
   // 이 유저가, 맞는 유저인지 체크
@@ -239,8 +238,7 @@ exports.changePasswd = async (req, res, next) => {
     res.status(500).json({ success: false, error: e });
   }
 
-  query =
-    "update p_user set passwd = ? , name =? , nickname =? , gender = ? where email =?";
+  query = "update p_user set passwd = ? , name =? , nickname =? where email =?";
   const hashedPasswd = await bcrypt.hash(new_passwd, 8);
   data = [hashedPasswd, name, nickname, gender, email];
 
