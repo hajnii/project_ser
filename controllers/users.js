@@ -213,7 +213,7 @@ exports.logout = async (req, res, next) => {
 // @desc 내 정보 변경
 // @route POST /api/v1/users/change
 // @parameters email, passwd, new_passwd , name, nickname, gender
-exports.changePasswd = async (req, res, next) => {
+exports.changeMyInfo = async (req, res, next) => {
   let email = req.body.email;
   let passwd = req.body.passwd;
   let name = req.body.name;

@@ -4,8 +4,7 @@ const {
   createUser,
   loginUser,
   logout,
-  changePasswd,
-  searchPasswd,
+  changeMyInfo,
   Mypage,
   deleteUser,
   forgotPasswd,
@@ -20,7 +19,7 @@ const router = express.Router();
 router.route("/").post(createUser).delete(auth, deleteUser);
 router.route("/login").post(loginUser);
 router.route("/logout").delete(auth, logout);
-router.route("/changePasswd").post(auth, changePasswd);
+router.route("/changeMyInfo").post(auth, changeMyInfo);
 router.route("/Mypage").get(auth, Mypage);
 
 router.route("/forgot").post(auth, forgotPasswd);
