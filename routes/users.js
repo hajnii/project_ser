@@ -21,7 +21,7 @@ router.route("/logout").delete(auth, logout);
 router.route("/changeMyInfo").post(auth, changeMyInfo);
 router.route("/Mypage").get(auth, Mypage);
 
-router.route("/resetPasswd").post(auth, resetPasswd);
+router.route("/resetPasswd").post(resetPasswd);
 
 router.route("/checkid").post(checkId);
 router.route("/checknik").post(checkNickName);
