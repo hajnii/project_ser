@@ -294,16 +294,16 @@ exports.deleteUser = async (req, res, next) => {
 // @req   passwd
 
 exports.resetPasswd = async (req, res, next) => {
-  const user_id = req.user.id;
+  const email = req.body.email;
   let passwd = req.body.passwd;
 
-  let query = `select * from p_user where id = ${user_id}`;
+  let query = `select * from p_user where email = ${email}`;
 
 
-  query = "update p_user set passwd = ? where id = ?";
+  query = "update p_user set passwd = ? where email = ?";
   const hashedPasswd = await bcrypt.hash(passwd, 8);
 
-  data = [hashedPasswd, user_id];
+  data = [hashedPasswd, email];
 
   try {
     [result] = await connection.query(query, data);
