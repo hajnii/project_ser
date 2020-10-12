@@ -216,14 +216,14 @@ exports.logout = async (req, res, next) => {
 exports.changeMyInfo = async (req, res, next) => {
   let email = req.body.email;
   let nickname = req.body.nickname;
-  let new_passwd = req.body.new_passwd;
+  let passwd = req.body.passwd;
   let user_id = req.user.id;
 
   // 이 유저가, 맞는 유저인지 체크
   let qur = `select * from p_user where id = ${user_id}`;
 
   query = "update p_user set passwd = ? , nickname =? where email =?";
-  const hashedPasswd = await bcrypt.hash(new_passwd, 8);
+  const hashedPasswd = await bcrypt.hash(passwd, 8);
   data = [hashedPasswd, nickname, email];
 
   try {
