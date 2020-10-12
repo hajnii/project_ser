@@ -220,16 +220,17 @@ exports.changeMyInfo = async (req, res, next) => {
   let user_id = req.user.id;
 
   // 이 유저가, 맞는 유저인지 체크
-  let query = `select * from p_user where id = ${user_id}`;
-  
+  let qur = `select * from p_user where id = ${user_id}`;
+
   query = "update p_user set passwd = ? , nickname =? where email =?";
   const hashedPasswd = await bcrypt.hash(new_passwd, 8);
   data = [hashedPasswd, nickname, email];
 
   try {
     [result] = await connection.query(query, data);
+    [rows] = await connection.query(qur);
     if ((result.affectedRows = 1)) {
-      res.status(200).json({ success: true, message: "변경되셨습니다." });
+      res.status(200).json({ success: true, message: "변경되셨습니다.",items:rows});
     } else {
       res.status(500).json({ success: false });
     }
