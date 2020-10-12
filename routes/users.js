@@ -7,7 +7,6 @@ const {
   changeMyInfo,
   Mypage,
   deleteUser,
-  forgotPasswd,
   resetPasswd,
   checkId,
   checkNickName,
@@ -22,8 +21,7 @@ router.route("/logout").delete(auth, logout);
 router.route("/changeMyInfo").post(auth, changeMyInfo);
 router.route("/Mypage").get(auth, Mypage);
 
-router.route("/forgot").post(auth, forgotPasswd);
-router.route("/resetPasswd/:resetPasswdToken").post(auth, resetPasswd);
+router.route("/resetPasswd").post(auth, resetPasswd);
 
 router.route("/checkid").post(checkId);
 router.route("/checknik").post(checkNickName);
