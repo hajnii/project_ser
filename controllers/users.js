@@ -215,28 +215,13 @@ exports.logout = async (req, res, next) => {
 // @parameters email, passwd, new_passwd , nickname,
 exports.changeMyInfo = async (req, res, next) => {
   let email = req.body.email;
-  let passwd = req.body.passwd;
   let nickname = req.body.nickname;
   let new_passwd = req.body.new_passwd;
   let user_id = req.user.id;
 
   // 이 유저가, 맞는 유저인지 체크
   let query = `select * from p_user where id = ${user_id}`;
-
-  try {
-    [rows] = await connection.query(query);
-    let savedPasswd = rows[0].passwd;
-    let isMatch = bcrypt.compareSync(passwd, savedPasswd);
-    if (isMatch != true) {
-      res
-        .status(401)
-        .json({ success: false, result: "아이디와 비밀번호를 확인해 주세요." });
-      return;
-    }
-  } catch (e) {
-    res.status(500).json({ success: false, error: e });
-  }
-
+  
   query = "update p_user set passwd = ? , nickname =? where email =?";
   const hashedPasswd = await bcrypt.hash(new_passwd, 8);
   data = [hashedPasswd, nickname, email];
