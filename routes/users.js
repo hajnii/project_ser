@@ -4,12 +4,13 @@ const {
   createUser,
   loginUser,
   logout,
-  changeMyInfo,
+  changeMyPass,
   Mypage,
   deleteUser,
   resetPasswd,
   checkId,
   checkNickName,
+  changeMyNik,
 } = require("../controllers/users");
 
 const router = express.Router();
@@ -18,7 +19,8 @@ const router = express.Router();
 router.route("/").post(createUser).delete(auth, deleteUser);
 router.route("/login").post(loginUser);
 router.route("/logout").delete(auth, logout);
-router.route("/changeMyInfo").post(auth, changeMyInfo);
+router.route("/changeMyPass").post(auth, changeMyPass);
+router.route("/changeMyNik").post(auth, changeMyNik);
 router.route("/Mypage").get(auth, Mypage);
 
 router.route("/resetPasswd").post(resetPasswd);

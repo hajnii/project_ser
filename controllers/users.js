@@ -5,6 +5,7 @@ const chalk = require("chalk");
 const crypto = require("crypto");
 
 const connection = require("../db/mysql_connection");
+const { query } = require("express");
 
 let nomal_txt = chalk.cyanBright;
 let highlight_txt = chalk.yellowBright;
@@ -164,6 +165,7 @@ exports.loginUser = async (req, res, next) => {
     let hashedPasswd = rows[0].passwd;
     user_id = rows[0].id;
     const isMatch = await bcrypt.compare(passwd, hashedPasswd);
+
     if (isMatch == false) {
       res
         .status(401)
@@ -189,6 +191,50 @@ exports.loginUser = async (req, res, next) => {
     res.status(500).json();
   }
 };
+// @desc 내 정보 비번 변경
+// @route POST /api/v1/users/changeMyPass
+// @parameters email, passwd, new_passwd , nickname,
+exports.changeMyPass = async (req, res, next) => {
+  let email = req.body.email;
+  let passwd = req.body.passwd;
+  let new_passwd = req.body.new_passwd;
+
+  let query = `select passwd from p_user where email = "${email}" `;
+  
+
+  console.log(query);
+  try {
+    [rows] = await connection.query(query);
+    let savedPasswd = rows[0].passwd;
+    email = rows[0].email;
+    let isMatch = await bcrypt.compare(passwd, savedPasswd);
+    if (isMatch == false) {
+      res
+        .status(401)
+        .json({ message: "아이디와 비밀번호가 맞는지 확인해 주세요." });
+      return;
+    }
+  } catch (e) {
+    res.status(500).json({ error: e });
+    return;
+  }
+  email = req.body.email;
+  
+  const hashedPasswd = await bcrypt.hash(new_passwd, 8);
+  let upquery = `update p_user set passwd = "${hashedPasswd}" where email = "${email}"`;
+  
+  console.log(upquery)
+  try {
+    [rows] = await connection.query(upquery);
+    if ((rows.affectedRows = 1)) {
+      res.status(200).json({ success: true, message: "변경되셨습니다.",items:rows});
+    } else {
+      res.status(500).json({ success: false ,message:"dr?"});
+    }
+  } catch (e) {
+    res.status(500).json({ success: false,error:e});
+  }
+};
 
 // @desc 로그아웃
 // @route DELETE /api/v1/users/logout
@@ -210,34 +256,52 @@ exports.logout = async (req, res, next) => {
   }
 };
 
-// @desc 내 정보 변경
-// @route POST /api/v1/users/changeMyInfo
+
+// @desc 내 정보 닉넴 변경
+// @route POST /api/v1/users/changeMyNik
 // @parameters email, passwd, new_passwd , nickname,
-exports.changeMyInfo = async (req, res, next) => {
-  let email = req.body.email;
+exports.changeMyNik = async (req, res, next) => {
   let nickname = req.body.nickname;
-  let passwd = req.body.passwd;
   let user_id = req.user.id;
 
   // 이 유저가, 맞는 유저인지 체크
   let qur = `select * from p_user where id = ${user_id}`;
 
-  query = "update p_user set passwd = ? , nickname =? where email =?";
-  const hashedPasswd = await bcrypt.hash(passwd, 8);
-  data = [hashedPasswd, nickname, email];
+  let query = `update p_user set nickname = "${nickname}" where id = ${user_id}`;
+
+  if (nickname == undefined || nickname == "") {
+    res.status(401).json({
+      success: false,
+      error: 1,
+      message: "닉네임을 입력해 주세요",
+    });
+    return;
+  }
+
+  let nikcheck = `select * from p_user where nickname = "${nickname}"`;
+  console.log(query);
 
   try {
-    [result] = await connection.query(query, data);
-    [rows] = await connection.query(qur);
-    if ((result.affectedRows = 1)) {
-      res.status(200).json({ success: true, message: "변경되셨습니다.",items:rows});
+    
+    [rows] = await connection.query(nikcheck);
+
+    if (rows.length > 0) {
+      res.status(401).json({
+        success: false,
+        error: 1,
+        message: "이미 존재하는 닉네임 입니다.",
+      });
     } else {
-      res.status(500).json({ success: false });
+      try {
+        [result] = await connection.query(query);
+        [user] = await connection.query(qur);
+        res.status(200).json({ success: true ,items : user});
+      } catch (e) {
+        res.status(500).json({ success: false });
+      }
     }
   } catch (e) {
-    res
-      .status(500)
-      .json({ success: false, error: 1, message: "닉네임이 중복되었습니다." });
+    res.status(500).json({ success: false });
   }
 };
 
@@ -288,16 +352,16 @@ exports.deleteUser = async (req, res, next) => {
   }
 };
 
-// @desc  리셋 패스워드 토큰을, 경로로 만들어서, 바꿀 비번과 함께 요청
-//        비번 초기화 ( reset passwd api )
-// @route POST /api/v1/users/resetPasswd/:resetPasswdToken
+// @desc  비번변경 ( reset passwd api )
+// @route POST /api/v1/users/resetPasswd
 // @req   passwd
 
 exports.resetPasswd = async (req, res, next) => {
-  const email = req.body.email;
+  let email = req.body.email;
   let passwd = req.body.passwd;
+  let user_id = req.user_id;
 
-  let query = `select * from p_user where email = ${email}`;
+  let query = `select * from p_user where id = ${user_id}`;
 
 
   query = "update p_user set passwd = ? where email = ?";
