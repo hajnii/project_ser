@@ -361,10 +361,10 @@ exports.resetPasswd = async (req, res, next) => {
   let passwd = req.body.passwd;
   let user_id = req.user_id;
 
-  let query = `select * from p_user where id = ${user_id}`;
+  // let query = `select * from p_user where id = ${user_id}`;
 
 
-  query = "update p_user set passwd = ? where email = ?";
+  let query = "update p_user set passwd = ? where email = ?";
   const hashedPasswd = await bcrypt.hash(passwd, 8);
 
   data = [hashedPasswd, email];
