@@ -218,7 +218,7 @@ exports.changeMyPass = async (req, res, next) => {
     res.status(500).json({ error: e });
     return;
   }
-  email = req.body.email;
+  user_id = req.user.id;
   
   const hashedPasswd = await bcrypt.hash(new_passwd, 8);
   let upquery = `update p_user set passwd = "${hashedPasswd}" where id = "${user_id}"`;
