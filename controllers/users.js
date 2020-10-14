@@ -195,11 +195,11 @@ exports.loginUser = async (req, res, next) => {
 // @route POST /api/v1/users/changeMyPass
 // @parameters email, passwd, new_passwd , nickname,
 exports.changeMyPass = async (req, res, next) => {
-  let email = req.body.email;
+  let user_id = req.user.id;
   let passwd = req.body.passwd;
   let new_passwd = req.body.new_passwd;
 
-  let query = `select passwd from p_user where email = "${email}" `;
+  let query = `select passwd from p_user where id = "${user_id}" `;
   
 
   console.log(query);
@@ -221,7 +221,7 @@ exports.changeMyPass = async (req, res, next) => {
   email = req.body.email;
   
   const hashedPasswd = await bcrypt.hash(new_passwd, 8);
-  let upquery = `update p_user set passwd = "${hashedPasswd}" where email = "${email}"`;
+  let upquery = `update p_user set passwd = "${hashedPasswd}" where id = "${user_id}"`;
   
   console.log(upquery)
   try {
