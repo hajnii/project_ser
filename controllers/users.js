@@ -206,7 +206,7 @@ exports.changeMyPass = async (req, res, next) => {
   try {
     [rows] = await connection.query(query);
     let savedPasswd = rows[0].passwd;
-    email = rows[0].email;
+    user_id = rows[0].id;
     let isMatch = await bcrypt.compare(passwd, savedPasswd);
     if (isMatch == false) {
       res
