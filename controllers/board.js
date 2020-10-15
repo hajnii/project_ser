@@ -150,16 +150,27 @@ exports.deleteBoard = async (req, res, next) => {
     return;
   }
 
-  query = `delete from p_board where board_id = ${board_id}`;
+  let commentquery = `delete from p_board where board_id =  ${board_id}`
+  
+  try {
+    [result] = await connection.query(commentquery);
+    res.status(200).json({ success: true, message: "삭제되었습니다" });
+  } catch (e) {
+    res.status(500).json();
+    return;
+  }
+
+  let boardquery = `delete from p_board where board_id = ${board_id}`;
 
   try {
-    [result] = await connection.query(query);
+    [result] = await connection.query(boardquery);
     res.status(200).json({ success: true, message: "삭제되었습니다" });
     return;
   } catch (e) {
     res.status(500).json();
     return;
   }
+
 };
 
 // @desc    게시글 상세보기(로그인 채로)
