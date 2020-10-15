@@ -150,26 +150,28 @@ exports.deleteBoard = async (req, res, next) => {
     return;
   }
 
-  let commentquery = `delete from p_board where board_id =  ${board_id}`
-  
-  try {
-    [result] = await connection.query(commentquery);
-    res.status(200).json({ success: true, message: "삭제되었습니다" });
-  } catch (e) {
-    res.status(500).json();
-    return;
-  }
-
   let boardquery = `delete from p_board where board_id = ${board_id}`;
 
   try {
     [result] = await connection.query(boardquery);
     res.status(200).json({ success: true, message: "삭제되었습니다" });
+    console.log(boardquery)
+  } catch (e) {
+    res.status(500).json();
+    return;
+  }
+  let commentquery = `delete from p_comment where board_id =  ${board_id}`
+  
+  try {
+    [result] = await connection.query(commentquery);
+    console.log(commentquery)
+    res.status(200).json({ success: true, message: "삭제되었습니다" });
     return;
   } catch (e) {
     res.status(500).json();
     return;
   }
+  
 
 };
 

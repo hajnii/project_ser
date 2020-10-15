@@ -197,10 +197,21 @@ exports.deleteQuestion = async (req, res, next) => {
     return;
   }
 
-  query = `delete from p_question where question_id = ${question_id}`;
+  let qboardquery = `delete from p_question where question_id = ${question_id}`;
 
   try {
-    [result] = await connection.query(query);
+    [result] = await connection.query(qboardquery);
+    res.status(200).json({ success: true, message: "삭제되었습니다" });
+  } catch (e) {
+    res.status(500).json();
+    return;
+  }
+  
+  let qcommentquery = `delete from p_comment where question_id = ${question_id}`
+  
+  try {
+    [result] = await connection.query(qcommentquery);
+    console.log(qcommentquery)
     res.status(200).json({ success: true, message: "삭제되었습니다" });
     return;
   } catch (e) {
