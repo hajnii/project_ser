@@ -7,9 +7,6 @@ const connection = require("../db/mysql_connection");
 exports.getCommentlist = async (req, res, next) => {
   let board_id = req.body.board_id;
 
-  if (!offset || !limit) {
-    res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
-  }
 
   let query = `select c.* , u.email , u.nickname from p_comment as c join p_user as u on c.user_id = u.id where board_id = ${board_id} order by created_at`;
   console.log(query);
