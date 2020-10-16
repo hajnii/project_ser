@@ -9,9 +9,6 @@ const connection = require("../db/mysql_connection");
 exports.getQCommentlist = async (req, res, next) => {
   let question_id = req.body.question_id;
 
-  if (!offset || !limit) {
-    res.status(400).json({ message: "파라미터가 잘 못 되었습니다." });
-  }
 
   let query = `select c.* , u.nickname,u.email from p_comment as c join p_user as u on c.user_id = u.id where question_id = ${question_id} order by created_at `;
   console.log(query);
