@@ -52,7 +52,7 @@ exports.latestQuestion = async (req, res, next) => {
     q_limit_query = `limit ${limit}`;
   }
 
-  let query = `select q.*,u.nickname,ifnull((select count(question_id) from p_boardview where question_id = q.question_id group by question_id),0) as view_cnt, ifnull((select count(question_id) as question_id_cnt from p_comment
+  let query = `select q.*,u.nickname,u.email,ifnull((select count(question_id) from p_boardview where question_id = q.question_id group by question_id),0) as view_cnt, ifnull((select count(question_id) as question_id_cnt from p_comment
 			        	where question_id = q.question_id group by question_id),0) as com_cnt
                 from p_question as q left join p_user as u on q.user_id = u.id 
                 order by created_at desc ${q_limit_query}`;
