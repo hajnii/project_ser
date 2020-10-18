@@ -72,7 +72,7 @@ exports.createUser = async (req, res, next) => {
 
   await conn.commit();
   await conn.release();
-  res.status(200).json({ success: true, result: result, token: token });
+  res.status(200).json({ success: true, token: token });
 };
 
 // 아이디 중복확인
