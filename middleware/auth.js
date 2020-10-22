@@ -28,7 +28,6 @@ const auth = async (req, res, next) => {
     res.status(401).json();
     return;
   }
-
   let query =
     "select u.id, u.email, u.created_at, t.token \
   from p_user as u \
