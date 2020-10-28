@@ -306,7 +306,7 @@ exports.changeMyNik = async (req, res, next) => {
 };
 
 // @desc 내 정보 가져오기
-// @route POST /api/v1/users/Mypage
+// @route GET /api/v1/users/Mypage
 // @parameters email, nickname, birth , gender
 exports.Mypage = async (req, res, next) => {
   let user_id = req.user.id;
