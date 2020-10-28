@@ -131,6 +131,7 @@ exports.updateBoard = async (req, res, next) => {
 // @desc    나의 게시글 삭제하기
 // @route   Delete /api/v1/board/delete
 // @request board_id,  user_id
+// 확인!@@
 
 exports.deleteBoard = async (req, res, next) => {
   let user_id = req.user.id;
